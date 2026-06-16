@@ -241,7 +241,7 @@ const COMP_ROWS: { feature: string; values: boolean[]; highlight?: boolean }[] =
   { feature: 'Personalized Curriculum', values: [false, false, true] },
   { feature: 'Performance Opportunities', values: [false, false, true] },
   { feature: 'Events & Community', values: [false, false, false] },
-  { feature: 'Assessments', values: [false, false, false] },
+  { feature: 'Monthly Assessments', values: [false, false, false] },
 ];
 
 function Mark({ on }: { on: boolean }) {
@@ -260,6 +260,9 @@ export function Comparison() {
   const strongTint = 'rgba(235,106,24,0.30)';
   const oclefTint = 'rgba(235,106,24,0.16)';
   const glow = '0 0 34px rgba(235,106,24,0.28)';
+  // Opaque backing for the pinned first column so cells sliding under it on
+  // mobile (horizontal swipe) are hidden, keeping the row labels readable.
+  const col1Bg = '#012c40';
   return (
     <section
       id="comparison"
@@ -293,10 +296,15 @@ export function Comparison() {
         </div>
 
         <div className="overflow-x-auto" onScroll={() => setSwiped(true)}>
-          <div className="min-w-[640px] relative">
+          <div className="min-w-[480px] relative">
             {/* Header */}
             <div className="grid grid-cols-[1.4fr_repeat(4,1fr)] gap-2 sm:gap-3">
-              <div />
+              <div
+                className="liquid-glass rounded-t-xl flex items-center px-4 py-4 text-sm font-semibold text-white/80"
+                style={{ position: 'sticky', left: 0, zIndex: 20, backgroundColor: col1Bg }}
+              >
+                Features
+              </div>
               {COMP_COLS.map((c) => (
                 <div
                   key={c}
@@ -327,7 +335,16 @@ export function Comparison() {
                       ? 'flex-col items-start justify-center gap-1 py-4 ring-1 ring-[#eb6a18]/60'
                       : 'items-center font-medium py-4 sm:py-5'
                   }`}
-                  style={row.highlight ? { background: strongTint, boxShadow: glow } : undefined}
+                  style={{
+                    // Inline position overrides liquid-glass's position:relative so the
+                    // label column actually pins while the row scrolls horizontally.
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 20,
+                    ...(row.highlight
+                      ? { background: `linear-gradient(${strongTint}, ${strongTint}), ${col1Bg}`, boxShadow: glow }
+                      : { backgroundColor: col1Bg }),
+                  }}
                 >
                   {row.highlight ? (
                     <>
@@ -548,16 +565,27 @@ export function VideoTestimonials() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {STORY_CARDS.map((s) => (
             <button
               key={s.name}
               onClick={() => setActive(s)}
               className="group isolate relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl text-left"
             >
-              {/* Thumbnail — drop a real video poster into `image` to replace.
-                  The thumbnail is rounded too so its corners stay clipped while it scales on hover. */}
-              {s.image ? (
+              {/* Media: a real video plays muted/looping inline as a silent preview;
+                  tapping the card opens the lightbox to enlarge it with sound. Falls
+                  back to an image poster, then a gradient placeholder. */}
+              {s.video ? (
+                <video
+                  src={s.video}
+                  muted
+                  loop
+                  autoPlay
+                  playsInline
+                  preload="metadata"
+                  className="absolute inset-0 h-full w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : s.image ? (
                 <img src={s.image} alt={s.name} className="absolute inset-0 h-full w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105" />
               ) : (
                 <div className="absolute inset-0 rounded-2xl transition-transform duration-500 group-hover:scale-105" style={{ background: s.gradient }} />
@@ -568,15 +596,15 @@ export function VideoTestimonials() {
 
               {/* Play button */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/40 bg-black/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                  <Play size={22} className="ml-0.5 text-white" fill="white" />
+                <span className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full border border-white/40 bg-black/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                  <Play size={20} className="ml-0.5 text-white" fill="white" />
                 </span>
               </div>
 
               {/* Caption */}
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <p className="font-semibold text-white">{s.name}</p>
-                <p className="mt-1 text-[15px] leading-snug text-white/80">{s.caption}</p>
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                <p className="text-sm sm:text-base font-semibold text-white">{s.name}</p>
+                <p className="mt-1 text-[13px] sm:text-[15px] leading-snug text-white/80">{s.caption}</p>
               </div>
             </button>
           ))}
@@ -1007,7 +1035,7 @@ const FOUNDER_PARAS = [
   'In my last year of touring as a concert pianist I kept hearing the same problem. “My nephew quit piano.” “My daughter fights me every time she practices.” Different cities, same quiet defeat. So I went looking for why.',
   'What I found is a quiet epidemic almost no one names. Millions of children are failing at the piano inside their own homes, and parents draw the only conclusion the situation offers. “Piano isn’t for them.” “The teacher wasn’t a good fit.” “My child isn’t talented.” None of it is true. The child is not failing. The system is. It hands a child one lesson a week, then sends them home to practice alone for six days. Inside that design, 83% drop out or stay musically illiterate within three years.',
   'So I stopped touring, moved to the Bay Area, and went to work inside a struggling piano school to see the problem from the floor. Then I opened a software company, Oclef, and we rebuilt those six days. Every day at the piano. A real feedback loop in the room, catching the mistake the moment it happens and building the right habit in its place. A path shaped around the child by people who know them by name.',
-  'If your child has already been counted among that 83%, talk with us before you believe it. The problem was never your child.',
+  'If your child has already quit piano or is having trouble getting to the piano every day, talk with us before you give up.',
   'And if they are just beginning, you are lucky.',
   'Because what your child learns here is not just piano. They learn how to focus, how to be confident, how to persist when doing something hard, how to recover, and how to begin again, tomorrow.',
   'That is the whole promise. Piano Every Day. Skills for life.',
