@@ -59,6 +59,9 @@
 }
 @media (prefers-reduced-motion: reduce){ .animate-marquee-left,.animate-marquee-right,.slow-pan{ animation:none; } }
 
+@keyframes swipeNudge { 0%,100%{ transform:translateX(0) } 50%{ transform:translateX(6px) } }
+.animate-swipe { animation: swipeNudge 1.1s ease-in-out infinite; }
+
 /* ── Spotlight cursor-following border ── */
 .spotlight-border::before {
   content: '';

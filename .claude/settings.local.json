@@ -34,7 +34,12 @@
       "Bash(git --version)",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(grep -E \"^[^/]+\\\\.\\(png|jpe?g\\)$\")"
+      "Bash(grep -E \"^[^/]+\\\\.\\(png|jpe?g\\)$\")",
+      "Bash(git commit -q -m ' *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(gh repo *)",
+      "Bash(grep -n \"export function Locations\\\\|grid sm:grid-cols-2 lg:grid-cols-3\\\\|tel:\\\\${\" src/Sections.tsx)"
     ]
   }
 }

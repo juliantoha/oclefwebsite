@@ -10,6 +10,7 @@ import {
   Check,
   X,
   ChevronDown,
+  ArrowRight,
   Minus,
   Phone,
   MapPin,
@@ -321,6 +322,7 @@ function Mark({ on }: { on: boolean }) {
 }
 
 export function Comparison() {
+  const [swiped, setSwiped] = useState(false);
   const strongTint = 'rgba(235,106,24,0.30)';
   const oclefTint = 'rgba(235,106,24,0.16)';
   const glow = '0 0 34px rgba(235,106,24,0.28)';
@@ -344,7 +346,19 @@ export function Comparison() {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Swipe hint — the table overflows on small screens */}
+        <div
+          className={`sm:hidden mb-4 flex justify-center transition-opacity duration-300 ${
+            swiped ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs text-white/80">
+            Swipe to compare
+            <ArrowRight size={14} className="animate-swipe" />
+          </span>
+        </div>
+
+        <div className="overflow-x-auto" onScroll={() => setSwiped(true)}>
           <div className="min-w-[640px] relative">
             {/* Header */}
             <div className="grid grid-cols-[1.4fr_repeat(4,1fr)] gap-2 sm:gap-3">
@@ -475,7 +489,7 @@ export function OclefPro() {
   const [open, setOpen] = useState(0);
   return (
     <section id="pro" className="scroll-mt-20 bg-[#fff6ed] py-20 sm:py-28 px-5">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12 sm:mb-16">
           <SectionLabel>Oclef Pro</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
@@ -523,17 +537,15 @@ export function OclefPro() {
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6 grid md:grid-cols-[1fr_1.1fr] gap-6 items-center">
-                    <div>
-                      <h3 className="text-gray-900 text-xl font-semibold leading-tight">
-                        {f.headline}
-                      </h3>
-                      <p className="mt-3 text-gray-600 text-sm leading-relaxed">{f.body}</p>
-                      <p className="mt-3 text-gray-900 font-display-serif italic">{f.tag}</p>
-                    </div>
+                  <div className="px-6 pb-7">
+                    <h3 className="text-gray-900 text-xl font-semibold leading-tight">
+                      {f.headline}
+                    </h3>
+                    <p className="mt-3 max-w-3xl text-gray-600 text-sm leading-relaxed">{f.body}</p>
+                    <p className="mt-3 text-gray-900 font-display-serif italic">{f.tag}</p>
 
-                    {/* Software screenshot */}
-                    <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                    {/* Software screenshot — full width so the UI is legible */}
+                    <div className="mt-6 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
                       <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-gray-100">
                         <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
                         <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
@@ -565,7 +577,7 @@ export function OclefPro() {
 }
 
 /* ─────────────────────────  Student story videos  ───────────────────────── */
-type StoryCard = { name: string; caption: string; gradient: string; image?: string };
+type StoryCard = { name: string; caption: string; gradient: string; image?: string; video?: string };
 const STORY_CARDS: StoryCard[] = [
   { name: 'Sarah & Mia', caption: 'How daily lessons ended the practice battle', gradient: 'linear-gradient(160deg, #e8a87c 0%, #b85c38 100%)' },
   { name: 'The Okonkwo Family', caption: 'Finally sure her daughter is truly learning', gradient: 'linear-gradient(160deg, #7494a8 0%, #2e4a5c 100%)' },
@@ -574,6 +586,19 @@ const STORY_CARDS: StoryCard[] = [
 ];
 
 export function VideoTestimonials() {
+  const [active, setActive] = useState<StoryCard | null>(null);
+
+  useEffect(() => {
+    if (!active) return;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setActive(null);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [active]);
+
   return (
     <section id="reviews" className="scroll-mt-20 bg-[#fff6ed] py-20 sm:py-28 px-5">
       <div className="max-w-6xl mx-auto">
@@ -593,7 +618,7 @@ export function VideoTestimonials() {
           {STORY_CARDS.map((s) => (
             <button
               key={s.name}
-              onClick={scrollToForm}
+              onClick={() => setActive(s)}
               className="group isolate relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl text-left"
             >
               {/* Thumbnail — drop a real video poster into `image` to replace.
@@ -623,6 +648,45 @@ export function VideoTestimonials() {
           ))}
         </div>
       </div>
+
+      {/* Video lightbox */}
+      {active && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 sm:p-6"
+          onClick={() => setActive(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${active.name} story`}
+        >
+          <div className="relative w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setActive(null)}
+              aria-label="Close"
+              className="absolute -top-11 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/80 transition-colors hover:bg-white/20 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+            <div className="aspect-video overflow-hidden rounded-2xl shadow-2xl">
+              {active.video ? (
+                <video src={active.video} controls autoPlay className="h-full w-full bg-black" />
+              ) : (
+                <div
+                  className="flex h-full w-full flex-col items-center justify-center gap-4 text-center"
+                  style={{ background: active.gradient }}
+                >
+                  <span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/40 bg-black/25 backdrop-blur-sm">
+                    <Play size={24} className="ml-0.5 text-white" fill="white" />
+                  </span>
+                  <div>
+                    <p className="font-semibold text-white">{active.name}</p>
+                    <p className="mt-1 text-sm text-white/70">Video coming soon</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -867,38 +931,39 @@ const LOCATIONS = [
 
 export function Locations() {
   return (
-    <section className="bg-white py-20 sm:py-28 px-5">
+    <section className="bg-white py-14 sm:py-28 px-5">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
           <SectionLabel>Our community</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-3xl sm:text-5xl leading-tight">
             Trusted by families across{' '}
             <span className="font-display-serif italic">America</span>
           </h2>
-          <p className="mt-5 text-gray-600 leading-relaxed">
+          <p className="mt-4 sm:mt-5 text-sm sm:text-base text-gray-600 leading-relaxed">
             Daily lessons happen online, with in-person recitals, camps, and events at studios
             across California and Washington.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-5">
           {LOCATIONS.map((loc) => (
             <a
               key={loc.name}
               href={`tel:${loc.phone.replace(/[^0-9]/g, '')}`}
-              className="group relative flex gap-4 rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#eb6a18]/40 hover:shadow-xl hover:shadow-gray-200/60"
+              className="group relative flex items-start gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#eb6a18]/40 hover:shadow-xl hover:shadow-gray-200/60"
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/10 transition-colors duration-300 group-hover:bg-[#eb6a18]/20">
-                <MapPin size={20} className="text-[#eb6a18]" strokeWidth={1.75} />
+              <div className="flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/10 transition-colors duration-300 group-hover:bg-[#eb6a18]/20">
+                <MapPin size={18} className="text-[#eb6a18] sm:hidden" strokeWidth={1.75} />
+                <MapPin size={20} className="hidden text-[#eb6a18] sm:block" strokeWidth={1.75} />
               </div>
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#eb6a18]/80">
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-[#eb6a18]/80">
                   {loc.region}
                 </p>
-                <h3 className="mt-0.5 font-semibold text-gray-900">{loc.name}</h3>
-                <p className="mt-1.5 text-sm text-gray-500 leading-snug">{loc.addr}</p>
-                <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 transition-colors group-hover:text-[#eb6a18]">
-                  <Phone size={14} strokeWidth={2} />
+                <h3 className="mt-0.5 text-sm sm:text-base font-semibold text-gray-900 leading-snug">{loc.name}</h3>
+                <p className="mt-1 text-xs sm:text-sm text-gray-500 leading-snug">{loc.addr}</p>
+                <p className="mt-2 sm:mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-gray-700 transition-colors group-hover:text-[#eb6a18]">
+                  <Phone size={13} strokeWidth={2} />
                   {loc.phone}
                 </p>
               </div>

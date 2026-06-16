@@ -25,70 +25,43 @@ interface RevealLayerProps {
   progress: number;
 }
 
+const HIDDEN_MASK = 'radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%)';
+
+/**
+ * Scroll-driven night→day reveal. A soft radial mask grows from the scene
+ * center until the warm image fills the viewport. Done with a pure CSS
+ * gradient mask (no canvas, no toDataURL) so it stays smooth on mobile.
+ */
 function RevealLayer({ image, progress }: RevealLayerProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const revealRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const sizeCanvas = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    sizeCanvas();
-    window.addEventListener('resize', sizeCanvas);
-    return () => window.removeEventListener('resize', sizeCanvas);
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
     const reveal = revealRef.current;
-    if (!canvas || !reveal) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Scroll reveal — a soft glow expanding from the scene center until the
-    // warm image fills the viewport.
-    if (progress > 0) {
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-      const r = progress * Math.hypot(canvas.width, canvas.height) * 1.4;
-      const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      gradient.addColorStop(0, 'rgba(255,255,255,1)');
-      gradient.addColorStop(0.4, 'rgba(255,255,255,1)');
-      gradient.addColorStop(0.6, 'rgba(255,255,255,0.75)');
-      gradient.addColorStop(0.75, 'rgba(255,255,255,0.4)');
-      gradient.addColorStop(0.88, 'rgba(255,255,255,0.12)');
-      gradient.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fill();
+    if (!reveal) return;
+    let mask = HIDDEN_MASK;
+    if (progress > 0.001) {
+      const core = progress * 110; // solid (revealed) radius
+      const soft = progress * 145; // soft outer edge → the glow
+      mask = `radial-gradient(circle at 50% 50%, #000 0%, #000 ${core}%, rgba(0,0,0,0) ${soft}%)`;
     }
-
-    const mask = `url(${canvas.toDataURL()})`;
     reveal.style.maskImage = mask;
     reveal.style.webkitMaskImage = mask;
-    reveal.style.maskSize = '100% 100%';
-    reveal.style.webkitMaskSize = '100% 100%';
   }, [progress]);
 
   return (
-    <>
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-        style={{ display: 'none' }}
-      />
-      <div
-        ref={revealRef}
-        className="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none"
-        style={{ backgroundImage: `url(${image})` }}
-      />
-    </>
+    <div
+      ref={revealRef}
+      className="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none"
+      style={
+        {
+          backgroundImage: `url(${image})`,
+          maskRepeat: 'no-repeat',
+          WebkitMaskRepeat: 'no-repeat',
+          maskImage: HIDDEN_MASK,
+          WebkitMaskImage: HIDDEN_MASK,
+        } as React.CSSProperties
+      }
+    />
   );
 }
 
@@ -212,8 +185,8 @@ export default function App() {
         </button>
       </nav>
 
-      <div ref={scrollWrapRef} className="relative" style={{ height: '300vh' }}>
-      <section className="sticky top-0 w-full overflow-hidden h-screen bg-[#02040f]" style={{ height: '100dvh' }}>
+      <div ref={scrollWrapRef} className="relative bg-[#02040f]" style={{ height: '300vh' }}>
+      <section className="sticky top-0 w-full overflow-hidden h-screen bg-[#02040f]" style={{ height: '100svh' }}>
         <div
           className="absolute inset-0 bg-center bg-cover bg-no-repeat z-10 hero-zoom"
           style={{ backgroundImage: `url(${BG_IMAGE_1})` }}
