@@ -1,0 +1,20 @@
+# dependencies
+node_modules
+
+# build output
+dist
+dist-ssr
+*.tsbuildinfo
+
+# editor / OS
+.DS_Store
+*.local
+*.log
+
+# vercel
+.vercel
+
+# large source image originals (optimized copies live in public/images)
+/*.png
+/*.jpeg
+/*.jpg

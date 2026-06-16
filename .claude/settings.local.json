@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sips -g pixelWidth -g pixelHeight hf_20260612_204915_c665bbc2-4b88-4251-9f8d-523eccfd49c5.png hf_20260612_210954_17470676-e6fa-4a13-80f4-48dbe52dd766.png)",
+      "Bash(mkdir -p public/images src)",
+      "Bash(sips -Z 1920 -s format jpeg -s formatOptions 85 hf_20260612_204915_c665bbc2-4b88-4251-9f8d-523eccfd49c5.png --out public/images/hero-night.jpg)",
+      "Bash(sips -Z 1920 -s format jpeg -s formatOptions 85 hf_20260612_210954_17470676-e6fa-4a13-80f4-48dbe52dd766.png --out public/images/hero-day.jpg)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python3 -c ' *)",
+      "Bash(cp \"oclef_logo_white 2.png\" /tmp/oclef_logo.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /tmp/oclef_logo.png)",
+      "Bash(osascript -e ' *)",
+      "Bash(xcrun swift -e ' *)",
+      "Bash(sips -Z 128 \"oclef_logo_white 2.png\" --out public/images/oclef-logo-white.png)",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "Bash(sips -Z 700 -s format jpeg \"HighDef_Image1of2_OclefHero.jpeg\" --out /tmp/new1.jpg)",
+      "Bash(sips -Z 2560 -s format jpeg -s formatOptions 82 \"HighDef_Image1of2_OclefHero.jpeg\" --out public/images/hero-night.jpg)",
+      "Bash(sips -g pixelWidth -g pixelHeight public/images/hero-night.jpg)",
+      "Bash(sips -g pixelWidth -g pixelHeight HighDef_Image1of2_OclefHero.png)",
+      "Bash(sips -Z 700 -s format jpeg HighDef_Image1of2_OclefHero.png --out /tmp/png1.jpg)",
+      "Bash(sips -Z 2560 -s format jpeg -s formatOptions 82 \"HighDef_Image1of2_OclefHero.png\" --out public/images/hero-night.jpg)",
+      "Bash(sips -Z 760 -s format jpeg ActivityFeed.png --out /tmp/af.jpg)",
+      "Bash(sips -Z 760 -s format jpeg \"Performance&Recitals.png\" --out /tmp/pr.jpg)",
+      "Bash(sips -Z 1600 -s format jpeg -s formatOptions 85 ActivityFeed.png --out public/images/pro-activity-feed.jpg)",
+      "Bash(sips -Z 1600 -s format jpeg -s formatOptions 85 Assignments.png --out public/images/pro-assignments.jpg)",
+      "Bash(sips -Z 1600 -s format jpeg -s formatOptions 85 MusicTheory.png --out public/images/pro-music-theory.jpg)",
+      "Bash(sips -Z 1600 -s format jpeg -s formatOptions 85 \"Performance&Recitals.png\" --out public/images/pro-performances-recitals.jpg)",
+      "Bash(sips -Z 1600 -s format jpeg -s formatOptions 85 MonthlyAssessments.png --out public/images/pro-monthly-assessments.jpg)",
+      "Bash(gh auth *)",
+      "Bash(git config *)",
+      "Bash(git --version)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(grep -E \"^[^/]+\\\\.\\(png|jpe?g\\)$\")"
+    ]
+  }
+}
