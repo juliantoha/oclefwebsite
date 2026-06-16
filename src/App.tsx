@@ -9,7 +9,9 @@ import {
   Comparison,
   GetStarted,
   OclefPro,
+  MeetTheTeachers,
   VideoTestimonials,
+  FounderNote,
   FAQ,
   Locations,
   FooterForm,
@@ -70,6 +72,7 @@ const NAV_ITEMS = [
   { label: 'How it Works', id: 'how' },
   { label: 'Comparison', id: 'comparison' },
   { label: 'Oclef Pro', id: 'pro' },
+  { label: 'Teachers', id: 'teachers' },
   { label: 'Reviews', id: 'reviews' },
   { label: 'Tuition', id: 'tuition' },
   { label: 'FAQ', id: 'faq' },
@@ -83,6 +86,7 @@ export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [navDark, setNavDark] = useState(false);
   const [activeSection, setActiveSection] = useState('why');
+  const [showSticky, setShowSticky] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -92,6 +96,14 @@ export default function App() {
       const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
       setScrollProgress((prev) => (Math.abs(prev - p) > 0.0005 ? p : prev));
       setNavDark(window.scrollY > wrap.offsetHeight - 80);
+
+      // Mobile sticky CTA: appear once the hero is scrolled past, but hide it
+      // while the booking form itself is on screen (so it never covers the form).
+      const pastHero = window.scrollY > wrap.offsetHeight - window.innerHeight;
+      const book = document.getElementById('book');
+      const bookInView = book ? book.getBoundingClientRect().top < window.innerHeight - 80 : false;
+      const nextSticky = pastHero && !bookInView;
+      setShowSticky((prev) => (prev !== nextSticky ? nextSticky : prev));
 
       // Scrollspy: the active nav item is the last section whose top has passed
       // just beneath the fixed nav.
@@ -157,7 +169,7 @@ export default function App() {
               <button
                 key={id}
                 onClick={() => scrollToId(id)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 ${
+                className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 ${
                   isActive
                     ? navDark
                       ? 'bg-gray-900 text-white'
@@ -177,11 +189,11 @@ export default function App() {
           onClick={() => scrollToId('book')}
           className={`hidden lg:block text-sm font-semibold px-6 py-2.5 rounded-full transition-colors duration-300 ${
             navDark
-              ? 'bg-gray-900 text-white hover:bg-gray-800'
+              ? 'bg-[#eb6a18] text-white hover:bg-[#cf5d12]'
               : 'bg-white text-gray-900 hover:bg-gray-100'
           }`}
         >
-          Sign Up
+          Book a Free Call
         </button>
       </nav>
 
@@ -239,10 +251,13 @@ export default function App() {
               <span className="relative inline-block">
                 Every Day
                 <span
-                  className="absolute left-full"
+                  className="absolute left-full whitespace-nowrap"
                   style={{ opacity: 1 - wordSwap, letterSpacing: '0.08em' }}
+                  aria-hidden="true"
                 >
-                  …
+                  <span className="hero-dot">.</span>
+                  <span className="hero-dot">.</span>
+                  <span className="hero-dot">.</span>
                 </span>
               </span>
             </span>
@@ -262,10 +277,15 @@ export default function App() {
             <span className="text-white font-semibold whitespace-nowrap">Not once a week.</span>
           </p>
 
-          <div style={{ pointerEvents: ctaReveal > 0.5 ? 'auto' : 'none' }}>
-            <CtaButton variant="glass" size="lg" onClick={() => scrollToId('book')}>
-              Start Playing
-            </CtaButton>
+          <div className="flex flex-col items-center gap-3">
+            <div style={{ pointerEvents: ctaReveal > 0.5 ? 'auto' : 'none' }}>
+              <CtaButton variant="glass" size="lg" onClick={() => scrollToId('book')}>
+                Start Learning
+              </CtaButton>
+            </div>
+            <p className="text-xs sm:text-sm text-white/60">
+              Free 30-min call · no commitment
+            </p>
           </div>
         </div>
 
@@ -291,14 +311,28 @@ export default function App() {
       <StatsStrip />
       <Comparison />
       <OclefPro />
+      <MeetTheTeachers />
       <NgaTestimonial />
       <VideoTestimonials />
       <PricingSection />
       <GetStarted />
       <FAQ />
       <JiTestimonial />
+      <FounderNote />
       <Locations />
       <FooterForm />
+
+      {/* Always-in-reach booking CTA for mobile/tablet (desktop has the nav button). */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-[90] lg:hidden border-t border-black/5 bg-[#fff6ed]/95 px-4 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md transition-transform duration-300 ${
+          showSticky ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+      >
+        <CtaButton variant="primary" fullWidth onClick={() => scrollToId('book')}>
+          Book a Free Consultation
+        </CtaButton>
+      </div>
     </div>
   );
 }

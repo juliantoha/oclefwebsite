@@ -7,6 +7,8 @@ import {
   Music4,
   Trophy,
   LineChart,
+  GraduationCap,
+  Clock,
   Check,
   X,
   ChevronDown,
@@ -14,11 +16,12 @@ import {
   Minus,
   Phone,
   MapPin,
-  ShieldCheck,
   Sparkle,
   Sparkles,
   Activity,
   Play,
+  Loader2,
+  CalendarCheck,
 } from 'lucide-react';
 
 const NAVY = '#004a69';
@@ -26,7 +29,7 @@ const NAVY = '#004a69';
 export const scrollToForm = () =>
   document.getElementById('book')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
       <Sparkle className="h-3 w-3 shrink-0" strokeWidth={1.5} />
@@ -49,9 +52,10 @@ export function CtaButton({
   children,
   variant = 'primary',
   size = 'lg',
-  onClick = scrollToForm,
+  onClick,
   type = 'button',
   fullWidth = false,
+  disabled = false,
   className = '',
 }: {
   children: React.ReactNode;
@@ -60,6 +64,7 @@ export function CtaButton({
   onClick?: () => void;
   type?: 'button' | 'submit';
   fullWidth?: boolean;
+  disabled?: boolean;
   className?: string;
 }) {
   const sizes = size === 'lg' ? 'text-base px-9 py-4' : 'text-sm px-6 py-3';
@@ -70,11 +75,15 @@ export function CtaButton({
     light: 'bg-white text-[#004a69] hover:bg-gray-100',
     dark: 'bg-gray-900 text-white hover:bg-gray-800',
   };
+  // Default action is scrolling to the booking form, but a type="submit" button
+  // must not hijack its own click with a scroll — the form's onSubmit owns it.
+  const handleClick = onClick ?? (type === 'submit' ? undefined : scrollToForm);
   return (
     <button
       type={type}
-      onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold leading-none transition-all duration-200 hover:scale-[1.03] active:scale-95 ${sizes} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      onClick={handleClick}
+      disabled={disabled}
+      className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold leading-none transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 ${sizes} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
     >
       {children}
     </button>
@@ -99,7 +108,7 @@ export function IntroBand() {
           difference daily lessons make.
         </p>
         <div className="mt-8 flex justify-center">
-          <CtaButton size="lg">Book a Free Consultation</CtaButton>
+          <CtaButton size="lg">See the Daily Difference</CtaButton>
         </div>
 
         <div className="mt-12 flex flex-col items-center gap-2">
@@ -153,7 +162,7 @@ export function WhyOclef() {
       </div>
 
       <div className="mt-10 flex justify-center">
-        <CtaButton size="lg">Book a Free Consultation</CtaButton>
+        <CtaButton size="lg">Set My Child Up to Succeed</CtaButton>
       </div>
     </section>
   );
@@ -209,88 +218,13 @@ export function HowItWorks() {
                 </span>
               </div>
               <h3 className="text-gray-900 text-xl font-semibold leading-snug">{step.title}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{step.body}</p>
+              <p className="text-[15px] text-gray-600 leading-relaxed">{step.body}</p>
             </div>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
 
-/* ─────────────────────────  Tuition  ───────────────────────── */
-const PLAN_FEATURES = [
-  'Daily Piano Lessons (Mon–Fri)',
-  'Access to Music Theory, Kaizen & Performance Seminar',
-  'Includes all Recitals and Events',
-];
-
-export function Tuition() {
-  return (
-    <section id="tuition" className="scroll-mt-20 bg-[#fff6ed] py-20 sm:py-28 px-5">
-      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div>
-          <SectionLabel>Tuition</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
-            Built to help your child{' '}
-            <span className="font-display-serif italic">learn it correctly</span>
-          </h2>
-          <div className="mt-6 space-y-5 text-gray-600 text-base leading-relaxed">
-            <p>
-              Our school will help your children learn piano correctly and love it. Don’t make
-              the common mistake of trying to learn piano once a week. Weekly lessons may waste
-              years of your children’s time and leave them frustrated with learning and
-              practicing. Our school is built to prevent that from happening.
-            </p>
-            <p>
-              Instead, we have hundreds of students and parents experiencing successful
-              outcomes. Sign up now and we’ll assess your children and build a custom plan that
-              will accelerate their piano education. We look forward to welcoming you at Oclef.
-            </p>
-          </div>
-
-          <div className="mt-8 flex items-start gap-3 rounded-xl bg-white border border-gray-100 p-5">
-            <ShieldCheck size={28} className="text-[#eb6a18] shrink-0" />
-            <div>
-              <p className="font-semibold text-gray-900">30-Day Money-Back Guarantee</p>
-              <p className="mt-1 text-sm text-gray-600 leading-relaxed">
-                Start your musical journey, attend lessons for 30 days, and experience our
-                unique teaching approach without any financial risk.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Pricing card */}
-        <div className="rounded-3xl p-8 sm:p-10 text-white shadow-xl" style={{ background: NAVY }}>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
-            Daily Lessons
-          </p>
-          <div className="mt-4 flex items-baseline gap-2">
-            <span className="text-6xl font-bold font-lato">$549</span>
-            <span className="text-white/70 text-lg">/month</span>
-          </div>
-          <p className="mt-1 text-white/60 text-sm">
-            per student · no contract, paid monthly
-          </p>
-
-          <ul className="mt-8 space-y-4">
-            {PLAN_FEATURES.map((f) => (
-              <li key={f} className="flex items-start gap-3">
-                <CheckCircle2 size={22} className="text-[#eb6a18] shrink-0 mt-0.5" />
-                <span className="text-white/90">{f}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-10">
-            <button
-              onClick={scrollToForm}
-              className="w-full bg-[#eb6a18] hover:bg-[#cf5d12] text-white text-base font-semibold px-9 py-4 rounded-full transition-all hover:scale-[1.02] active:scale-95"
-            >
-              Get Started
-            </button>
-          </div>
+        <div className="mt-12 sm:mt-16 flex justify-center">
+          <CtaButton size="lg">Give my Child Piano Every Day</CtaButton>
         </div>
       </div>
     </section>
@@ -541,7 +475,7 @@ export function OclefPro() {
                     <h3 className="text-gray-900 text-xl font-semibold leading-tight">
                       {f.headline}
                     </h3>
-                    <p className="mt-3 max-w-3xl text-gray-600 text-sm leading-relaxed">{f.body}</p>
+                    <p className="mt-3 max-w-3xl text-gray-600 text-[15px] leading-relaxed">{f.body}</p>
                     <p className="mt-3 text-gray-900 font-display-serif italic">{f.tag}</p>
 
                     {/* Software screenshot — full width so the UI is legible */}
@@ -569,7 +503,7 @@ export function OclefPro() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <CtaButton size="lg">Book a Free Consultation</CtaButton>
+          <CtaButton size="lg">Unlock My Child’s Potential</CtaButton>
         </div>
       </div>
     </section>
@@ -642,10 +576,14 @@ export function VideoTestimonials() {
               {/* Caption */}
               <div className="absolute inset-x-0 bottom-0 p-5">
                 <p className="font-semibold text-white">{s.name}</p>
-                <p className="mt-1 text-sm leading-snug text-white/80">{s.caption}</p>
+                <p className="mt-1 text-[15px] leading-snug text-white/80">{s.caption}</p>
               </div>
             </button>
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <CtaButton size="lg">Start Your Family’s Story</CtaButton>
         </div>
       </div>
 
@@ -671,16 +609,26 @@ export function VideoTestimonials() {
                 <video src={active.video} controls autoPlay className="h-full w-full bg-black" />
               ) : (
                 <div
-                  className="flex h-full w-full flex-col items-center justify-center gap-4 text-center"
+                  className="flex h-full w-full flex-col items-center justify-center gap-4 px-6 text-center"
                   style={{ background: active.gradient }}
                 >
-                  <span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/40 bg-black/25 backdrop-blur-sm">
-                    <Play size={24} className="ml-0.5 text-white" fill="white" />
-                  </span>
-                  <div>
-                    <p className="font-semibold text-white">{active.name}</p>
-                    <p className="mt-1 text-sm text-white/70">Video coming soon</p>
-                  </div>
+                  <p className="font-display-serif italic text-2xl text-white sm:text-3xl">
+                    {active.name}’s story is coming soon.
+                  </p>
+                  <p className="max-w-md text-sm leading-relaxed text-white/85">
+                    We’re filming our families’ stories right now. The best way to see if Oclef is
+                    right for your child is a quick, free consultation.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setActive(null);
+                      scrollToForm();
+                    }}
+                    className="mt-1 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#004a69] transition-transform duration-200 hover:scale-[1.03] active:scale-95"
+                  >
+                    Book a Free Consultation
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
               )}
             </div>
@@ -768,7 +716,7 @@ export function StatsStrip() {
                 <CountUp target={s.target!} prefix={s.prefix} suffix={s.suffix} />
               )}
             </div>
-            <div className="mt-2 text-sm text-gray-600">{s.label}</div>
+            <div className="mt-2 text-[15px] text-gray-600">{s.label}</div>
           </div>
         ))}
       </div>
@@ -824,7 +772,7 @@ export function GetStarted() {
                 {s.n}
               </div>
               <h3 className="mt-6 text-white text-xl font-semibold">{s.title}</h3>
-              <p className="mt-2 text-white/65 text-sm leading-relaxed max-w-[280px] mx-auto">
+              <p className="mt-2 text-white/65 text-[15px] leading-relaxed max-w-[280px] mx-auto">
                 {s.body}
               </p>
             </div>
@@ -910,7 +858,7 @@ export function FAQ() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <CtaButton size="lg">Book a Free Consultation</CtaButton>
+          <CtaButton size="lg">Ask Us Anything</CtaButton>
         </div>
       </div>
     </section>
@@ -939,7 +887,7 @@ export function Locations() {
             Trusted by families across{' '}
             <span className="font-display-serif italic">America</span>
           </h2>
-          <p className="mt-4 sm:mt-5 text-sm sm:text-base text-gray-600 leading-relaxed">
+          <p className="mt-4 sm:mt-5 text-base text-gray-600 leading-relaxed">
             Daily lessons happen online, with in-person recitals, camps, and events at studios
             across California and Washington.
           </p>
@@ -960,9 +908,9 @@ export function Locations() {
                 <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-[#eb6a18]/80">
                   {loc.region}
                 </p>
-                <h3 className="mt-0.5 text-sm sm:text-base font-semibold text-gray-900 leading-snug">{loc.name}</h3>
-                <p className="mt-1 text-xs sm:text-sm text-gray-500 leading-snug">{loc.addr}</p>
-                <p className="mt-2 sm:mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-gray-700 transition-colors group-hover:text-[#eb6a18]">
+                <h3 className="mt-0.5 text-base font-semibold text-gray-900 leading-snug">{loc.name}</h3>
+                <p className="mt-1 text-sm text-gray-500 leading-snug">{loc.addr}</p>
+                <p className="mt-2 sm:mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 transition-colors group-hover:text-[#eb6a18]">
                   <Phone size={13} strokeWidth={2} />
                   {loc.phone}
                 </p>
@@ -975,32 +923,222 @@ export function Locations() {
   );
 }
 
+/* ─────────────────────────  Meet the teachers  ───────────────────────── */
+/* To surface a teacher's credentials, fill in `degree` (e.g. 'M.M., Piano Performance')
+   and `years` (e.g. '12 years teaching'). Rows render only when the real value is set —
+   no placeholder labels ship to parents. */
+type Teacher = {
+  name: string;
+  title: string;
+  initial: string;
+  gradient: string;
+  image?: string;
+  degree?: string;
+  years?: string;
+};
+const TEACHERS: Teacher[] = [
+  { name: 'Dr. Phong', title: 'Co-Founder', initial: 'P', gradient: 'linear-gradient(160deg, #6aa9a3 0%, #2f6460 100%)' },
+  { name: 'Dr. Matthew', title: 'Piano Professor', initial: 'M', gradient: 'linear-gradient(160deg, #e8a87c 0%, #b85c38 100%)' },
+  { name: 'Dr. I-Lin', title: 'Piano Professor', initial: 'I', gradient: 'linear-gradient(160deg, #9aa884 0%, #56653f 100%)' },
+  { name: 'Dr. Ludwig', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(160deg, #7494a8 0%, #2e4a5c 100%)' },
+  { name: 'Dr. Justin', title: 'Piano Professor', initial: 'J', gradient: 'linear-gradient(160deg, #c98c93 0%, #7a4a52 100%)' },
+  { name: 'Ms. Yuliya', title: 'Piano Professor', initial: 'Y', gradient: 'linear-gradient(160deg, #a585b8 0%, #503a5e 100%)' },
+  { name: 'Mr. Connor', title: 'Piano Professor', initial: 'C', gradient: 'linear-gradient(160deg, #d3a15f 0%, #8a5e2a 100%)' },
+  { name: 'Dr. Lucy', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(160deg, #8f93c4 0%, #45497e 100%)' },
+];
+
+export function MeetTheTeachers() {
+  return (
+    <section id="teachers" className="scroll-mt-20 bg-white py-20 sm:py-28 px-5">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+          <SectionLabel>Our teachers</SectionLabel>
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+            Taught by{' '}
+            <span className="font-display-serif italic">world-class teachers</span>
+          </h2>
+          <p className="mt-5 text-gray-600 leading-relaxed">
+            Your child learns 1-on-1 with accomplished, degreed professors. Every Oclef teacher
+            is a master of their craft who will ensure your child learns and improves daily.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-6">
+          {TEACHERS.map((t) => (
+            <div key={t.name} className="text-center">
+              <div
+                className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-sm"
+                style={{ background: t.gradient }}
+              >
+                {t.image ? (
+                  <img src={t.image} alt={t.name} className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <span className="absolute inset-0 flex items-center justify-center font-lato text-6xl font-light text-white/80">
+                    {t.initial}
+                  </span>
+                )}
+              </div>
+              <h3 className="mt-4 font-semibold text-gray-900">{t.name}</h3>
+              <p className="text-sm text-[#eb6a18]">{t.title}</p>
+              {t.degree && (
+                <p className="mt-2 flex items-center justify-center gap-1.5 text-[13px] text-gray-500">
+                  <GraduationCap size={13} className="shrink-0" /> {t.degree}
+                </p>
+              )}
+              {t.years && (
+                <p className="mt-0.5 flex items-center justify-center gap-1.5 text-[13px] text-gray-500">
+                  <Clock size={13} className="shrink-0" /> {t.years}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 sm:mt-16 flex justify-center">
+          <CtaButton size="lg">Meet Your Child’s Teacher</CtaButton>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────  Founder note  ───────────────────────── */
+const FOUNDER_PARAS = [
+  'In my last year of touring as a concert pianist I kept hearing the same problem. “My nephew quit piano.” “My daughter fights me every time she practices.” Different cities, same quiet defeat. So I went looking for why.',
+  'What I found is a quiet epidemic almost no one names. Millions of children are failing at the piano inside their own homes, and parents draw the only conclusion the situation offers. “Piano isn’t for them.” “The teacher wasn’t a good fit.” “My child isn’t talented.” None of it is true. The child is not failing. The system is. It hands a child one lesson a week, then sends them home to practice alone for six days. Inside that design, 83% drop out or stay musically illiterate within three years.',
+  'So I stopped touring, moved to the Bay Area, and went to work inside a struggling piano school to see the problem from the floor. Then I opened a software company, Oclef, and we rebuilt those six days. Every day at the piano. A real feedback loop in the room, catching the mistake the moment it happens and building the right habit in its place. A path shaped around the child by people who know them by name.',
+  'If your child has already been counted among that 83%, talk with us before you believe it. The problem was never your child.',
+  'And if they are just beginning, you are lucky.',
+  'Because what your child learns here is not just piano. They learn how to focus, how to be confident, how to persist when doing something hard, how to recover, and how to begin again, tomorrow.',
+  'That is the whole promise. Piano Every Day. Skills for life.',
+];
+
+export function FounderNote() {
+  return (
+    <section className="bg-[#fff6ed] py-20 sm:py-28 px-5">
+      <div className="max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-[300px_1fr] gap-10 lg:gap-16 items-start">
+          {/* Founder photo (placeholder) */}
+          <div className="mx-auto w-full max-w-[280px] lg:mx-0 lg:sticky lg:top-24">
+            <div
+              className="aspect-[4/5] rounded-2xl overflow-hidden shadow-md flex items-center justify-center"
+              style={{ background: 'linear-gradient(160deg, #0d5577 0%, #002642 100%)' }}
+            >
+              <span className="font-lato text-6xl font-light text-white/70">JT</span>
+            </div>
+            <p className="mt-4 text-center lg:text-left font-semibold text-gray-900">Julian Toha</p>
+            <p className="text-center lg:text-left text-sm text-gray-500">Founder, Oclef</p>
+          </div>
+
+          {/* The note */}
+          <div>
+            <SectionLabel>A note from our founder</SectionLabel>
+            <h2 className="mt-4 text-gray-900 text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1]">
+              The problem was never{' '}
+              <span className="font-display-serif italic text-[#eb6a18]">your child.</span>
+            </h2>
+            <div className="mt-6 space-y-5 text-gray-600 text-base leading-relaxed">
+              {FOUNDER_PARAS.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+
+            {/* Signature (placeholder) */}
+            <div className="mt-8">
+              <p className="font-display-serif italic text-3xl text-gray-800">Julian Toha</p>
+              <p className="mt-1 text-sm text-gray-500">Founder, Oclef</p>
+            </div>
+
+            <div className="mt-8">
+              <CtaButton size="lg">Talk With Us</CtaButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─────────────────────────  Consultation form + footer  ───────────────────────── */
+type FieldInputMode = 'text' | 'email' | 'tel' | 'numeric' | 'none';
 function FloatingField({
   label,
+  name,
   type = 'text',
+  required = false,
+  inputMode,
+  autoComplete,
   className = '',
 }: {
   label: string;
+  name: string;
   type?: string;
+  required?: boolean;
+  inputMode?: FieldInputMode;
+  autoComplete?: string;
   className?: string;
 }) {
   return (
     <div className={`relative ${className}`}>
       <input
         type={type}
+        name={name}
+        required={required}
+        inputMode={inputMode}
+        autoComplete={autoComplete}
         placeholder=" "
         aria-label={label}
-        className="peer w-full rounded-lg border border-white/15 bg-white/[0.06] px-4 pt-6 pb-2 text-sm text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
+        className="peer w-full rounded-lg border border-white/15 bg-white/[0.06] px-4 pt-6 pb-2 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
       />
       <label className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/40 transition-all duration-200 peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:text-[#eb6a18] peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:text-white/50">
         {label}
+        {required && <span className="text-[#eb6a18]"> *</span>}
       </label>
     </div>
   );
 }
 
+/**
+ * Where booking submissions are sent (Formspree). Submissions POST here as
+ * FormData with an Accept: application/json header, so Formspree returns JSON
+ * and the form shows its inline success/error state without a page redirect.
+ * Swap this URL to repoint the form at a different Formspree form or backend.
+ */
+const FORM_ENDPOINT = 'https://formspree.io/f/xykaorvo';
+
+const CALL_PROMISES = [
+  'A free 30-minute video call, at a time that suits you',
+  'An honest assessment of your child’s level and goals',
+  'A custom daily-practice plan built around your child',
+];
+
 export function FooterForm() {
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (status === 'submitting') return;
+    const form = e.currentTarget;
+    setStatus('submitting');
+    try {
+      if (FORM_ENDPOINT) {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error('Request failed');
+      } else {
+        // No endpoint wired yet — simulate a successful round-trip so the
+        // confirmation UX is fully testable. Set FORM_ENDPOINT above to go live.
+        await new Promise((r) => setTimeout(r, 900));
+      }
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
+  };
+
   return (
     <footer style={{ background: NAVY }} className="text-white pt-20 sm:pt-28 px-5">
       <div className="max-w-5xl mx-auto">
@@ -1008,13 +1146,20 @@ export function FooterForm() {
           <div>
             <SectionLabel>Get started</SectionLabel>
             <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
-              Book your{' '}
+              Book your free{' '}
               <span className="font-display-serif italic text-[#eb6a18]">consultation</span>
             </h2>
             <p className="mt-5 text-white/70 leading-relaxed">
-              Fill out the form to schedule your free 1-on-1 consultation and Q&amp;A. We’ll
-              assess your child and build a custom plan to accelerate their piano education.
+              A relaxed 1-on-1 call — no pressure, no commitment. Here’s what you’ll get:
             </p>
+            <ul className="mt-6 flex flex-col gap-3">
+              {CALL_PROMISES.map((p) => (
+                <li key={p} className="flex items-start gap-3 text-[15px] text-white/85">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#eb6a18]" strokeWidth={2} />
+                  {p}
+                </li>
+              ))}
+            </ul>
             <img
               src="/images/yelp-400-families.png"
               alt="Rated a 5-star business on Yelp by 400+ families"
@@ -1022,38 +1167,71 @@ export function FooterForm() {
             />
           </div>
 
-          <form className="grid sm:grid-cols-2 gap-4" onSubmit={(e) => e.preventDefault()}>
-            <FloatingField label="Parent first name" />
-            <FloatingField label="Parent last name" />
-            <FloatingField label="Email address" type="email" className="sm:col-span-2" />
-            <FloatingField label="Phone number" type="tel" className="sm:col-span-2" />
-            <FloatingField label="Child / children name(s)" className="sm:col-span-2" />
-            <div className="relative sm:col-span-2">
-              <label className="pointer-events-none absolute left-4 top-3 text-[11px] text-white/50">
-                Where did you hear about us?
-              </label>
-              <select
-                aria-label="Where did you hear about us"
-                defaultValue=""
-                className="w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] px-4 pt-6 pb-2 text-sm text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
-              >
-                <option value="" disabled className="text-gray-900">
-                  Select an option
-                </option>
-                <option className="text-gray-900">Google search</option>
-                <option className="text-gray-900">Friend or family</option>
-                <option className="text-gray-900">Social media</option>
-                <option className="text-gray-900">Other</option>
-              </select>
-              <ChevronDown
-                size={18}
-                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40"
-              />
+          {status === 'success' ? (
+            <div className="flex flex-col items-start rounded-2xl border border-white/15 bg-white/[0.06] p-8 sm:p-10">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#00952e]/20 text-[#9be7ad]">
+                <CalendarCheck size={26} strokeWidth={2} />
+              </span>
+              <h3 className="mt-5 text-2xl font-semibold text-white">You’re all set.</h3>
+              <p className="mt-3 text-white/70 leading-relaxed">
+                Thanks — we’ve got your details. A member of the Oclef team will reach out within
+                one business day to schedule your free consultation. Keep an eye on your phone and
+                inbox.
+              </p>
             </div>
-            <CtaButton type="submit" onClick={() => {}} fullWidth className="sm:col-span-2 mt-2">
-              Book your Consultation
-            </CtaButton>
-          </form>
+          ) : (
+            <form className="grid sm:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+              <FloatingField label="Parent first name" name="parent_first_name" required autoComplete="given-name" />
+              <FloatingField label="Parent last name" name="parent_last_name" required autoComplete="family-name" />
+              <FloatingField label="Email address" name="email" type="email" required inputMode="email" autoComplete="email" className="sm:col-span-2" />
+              <FloatingField label="Phone number" name="phone" type="tel" required inputMode="tel" autoComplete="tel" className="sm:col-span-2" />
+              <FloatingField label="Child / children name(s)" name="child_names" autoComplete="off" className="sm:col-span-2" />
+              <div className="relative sm:col-span-2">
+                <select
+                  name="referral_source"
+                  aria-label="Where did you hear about us"
+                  defaultValue=""
+                  className="w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] px-4 py-4 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
+                >
+                  <option value="" disabled className="text-gray-900">
+                    – Where did you hear about us? –
+                  </option>
+                  <option className="text-gray-900">Friend/Family</option>
+                  <option className="text-gray-900">School Flyer</option>
+                  <option className="text-gray-900">Yelp</option>
+                  <option className="text-gray-900">Google</option>
+                  <option className="text-gray-900">Other</option>
+                </select>
+                <ChevronDown
+                  size={18}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40"
+                />
+              </div>
+              {status === 'error' && (
+                <p className="sm:col-span-2 -mb-1 text-sm text-[#ffb4a8]">
+                  Something went wrong sending your details. Please try again in a moment.
+                </p>
+              )}
+              <CtaButton
+                type="submit"
+                disabled={status === 'submitting'}
+                fullWidth
+                className="sm:col-span-2 mt-2"
+              >
+                {status === 'submitting' ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Booking…
+                  </>
+                ) : (
+                  'Book My Free Consultation'
+                )}
+              </CtaButton>
+              <p className="sm:col-span-2 text-center text-xs text-white/45">
+                Free 30-minute call · no commitment · we never share your details.
+              </p>
+            </form>
+          )}
         </div>
 
         <div className="mt-20 border-t border-white/10 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">

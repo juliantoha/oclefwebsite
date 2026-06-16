@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, X, ShieldCheck, Sparkle } from 'lucide-react';
-import { scrollToForm, CtaButton } from './Sections';
+import { Check, X, ShieldCheck } from 'lucide-react';
+import { scrollToForm, CtaButton, SectionLabel } from './Sections';
 
 const cn = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(' ');
 
@@ -102,7 +102,7 @@ const plan: Plan = {
   description: 'Everything your child needs to thrive. No contract, paid monthly.',
   bg: '#1c1c1c',
   featured: true,
-  cta: 'Get Started',
+  cta: 'Start With a Free Assessment',
   features: [
     { text: 'Daily 1-on-1 lessons (Mon–Fri)', included: true },
     { text: 'Kaizen guided practice, every day', included: true },
@@ -140,7 +140,7 @@ function PricingCard({ plan }: { plan: Plan }) {
         </FadeUp>
 
         <FadeUp delay={0.2}>
-          <p className="mt-4 text-sm leading-relaxed text-white/60">{plan.description}</p>
+          <p className="mt-4 text-[15px] leading-relaxed text-white/60">{plan.description}</p>
         </FadeUp>
 
         <FadeUp delay={0.3}>
@@ -157,7 +157,7 @@ function PricingCard({ plan }: { plan: Plan }) {
               <li
                 key={f.text}
                 className={cn(
-                  'flex items-center gap-3 py-4 text-sm',
+                  'flex items-center gap-3 py-4 text-[15px]',
                   i !== 0 && 'border-t border-white/10',
                   f.included ? 'text-white/85' : 'text-white/40',
                 )}
@@ -196,10 +196,7 @@ export function PricingSection() {
           {/* Left — copy */}
           <div>
             <FadeUp>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs text-white/80 backdrop-blur">
-                <Sparkle className="h-3 w-3 text-[#eb6a18]" strokeWidth={1.5} />
-                Tuition
-              </span>
+              <SectionLabel>Tuition</SectionLabel>
             </FadeUp>
             <FadeUp delay={0.1}>
               <h2 className="mt-6 text-3xl sm:text-4xl md:text-5xl font-normal tracking-[-0.02em] leading-[1.05] text-white">
@@ -208,13 +205,13 @@ export function PricingSection() {
               </h2>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <p className="mt-6 max-w-md text-sm sm:text-base text-white/60">
+              <p className="mt-6 max-w-md text-base text-white/60">
                 No contract, paid monthly. Start with a free assessment, then daily lessons built
                 around your child, backed by a 30-day money-back guarantee.
               </p>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="mt-8 flex flex-col items-start gap-4 text-sm">
+              <div className="mt-8 flex flex-col items-start gap-4 text-[15px]">
                 <div className="flex items-center gap-2 text-white/50">
                   <ShieldCheck className="h-4 w-4 text-[#eb6a18]" strokeWidth={1.5} />
                   30-day money-back guarantee on all new enrollments.

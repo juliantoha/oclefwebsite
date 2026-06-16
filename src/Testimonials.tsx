@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { annotate } from 'rough-notation';
 import { Star } from 'lucide-react';
-import { CtaButton } from './Sections';
 
 /* Hand-drawn rough-notation that draws itself when scrolled into view */
 function Annotate({
@@ -111,14 +110,7 @@ export function TiffanyTestimonial() {
 
 export function NgaTestimonial() {
   return (
-    <Band
-      bg="#c4e5f4"
-      fg="#004a69"
-      sub="#4a6b7a"
-      author="Nga C."
-      stars={false}
-      cta={<CtaButton>Give my Child Piano Every Day</CtaButton>}
-    >
+    <Band bg="#c4e5f4" fg="#004a69" sub="#4a6b7a" author="Nga C." stars={false}>
       “Oclef has transformed my son’s{' '}
       <Annotate type="underline">love for music</Annotate>, making it a cherished part of his
       daily routine.”
