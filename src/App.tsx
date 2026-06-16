@@ -277,15 +277,10 @@ export default function App() {
             <span className="text-white font-semibold whitespace-nowrap">Not once a week.</span>
           </p>
 
-          <div className="flex flex-col items-center gap-3">
-            <div style={{ pointerEvents: ctaReveal > 0.5 ? 'auto' : 'none' }}>
-              <CtaButton variant="glass" size="lg" onClick={() => scrollToId('book')}>
-                Start Learning
-              </CtaButton>
-            </div>
-            <p className="text-xs sm:text-sm text-white/60">
-              Free 30-min call · no commitment
-            </p>
+          <div style={{ pointerEvents: ctaReveal > 0.5 ? 'auto' : 'none' }}>
+            <CtaButton variant="glass" size="lg" onClick={() => scrollToId('intro')}>
+              Start Learning
+            </CtaButton>
           </div>
         </div>
 

@@ -93,7 +93,7 @@ export function CtaButton({
 /* ─────────────────────────  Intro band  ───────────────────────── */
 export function IntroBand() {
   return (
-    <section className="bg-white py-16 sm:py-24 px-5">
+    <section id="intro" className="scroll-mt-20 bg-white py-16 sm:py-24 px-5">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl leading-[1.1]">
           Weekly lessons{' '}
