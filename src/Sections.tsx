@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   CalendarDays,
-  CheckCircle2,
   Users,
   MonitorSmartphone,
   Music4,
@@ -21,6 +20,7 @@ import {
   Play,
   Loader2,
   CalendarCheck,
+  ShieldCheck,
 } from 'lucide-react';
 
 const NAVY = '#004a69';
@@ -1151,6 +1151,8 @@ function FloatingField({
   required = false,
   inputMode,
   autoComplete,
+  helper,
+  showValid = false,
   className = '',
 }: {
   label: string;
@@ -1159,24 +1161,35 @@ function FloatingField({
   required?: boolean;
   inputMode?: FieldInputMode;
   autoComplete?: string;
+  helper?: string;
+  showValid?: boolean;
   className?: string;
 }) {
   return (
-    <div className={`relative ${className}`}>
-      <input
-        type={type}
-        name={name}
-        required={required}
-        inputMode={inputMode}
-        autoComplete={autoComplete}
-        placeholder=" "
-        aria-label={label}
-        className="peer w-full rounded-lg border border-white/15 bg-white/[0.06] px-4 pt-6 pb-2 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
-      />
-      <label className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/40 transition-all duration-200 peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:text-[#eb6a18] peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:text-white/50">
-        {label}
-        {required && <span className="text-[#eb6a18]"> *</span>}
-      </label>
+    <div className={className}>
+      <div className="relative">
+        <input
+          type={type}
+          name={name}
+          required={required}
+          inputMode={inputMode}
+          autoComplete={autoComplete}
+          placeholder=" "
+          aria-label={label}
+          className={`peer w-full rounded-lg border border-white/15 bg-white/[0.06] px-4 ${showValid ? 'pr-11' : ''} pt-6 pb-2 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25`}
+        />
+        <label className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/40 transition-all duration-200 peer-focus:top-3 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:text-[#eb6a18] peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:text-white/50">
+          {label}
+          {required && <span className="text-[#eb6a18]"> *</span>}
+        </label>
+        {showValid && (
+          <Check
+            aria-hidden="true"
+            className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9be7ad] opacity-0 transition-opacity peer-[:not(:placeholder-shown):valid:not(:focus)]:opacity-100"
+          />
+        )}
+      </div>
+      {helper && <p className="mt-1.5 text-[11px] text-white/45">{helper}</p>}
     </div>
   );
 }
@@ -1189,19 +1202,22 @@ function FloatingField({
  */
 const FORM_ENDPOINT = 'https://formspree.io/f/xykaorvo';
 
-const CALL_PROMISES = [
-  'A free 30-minute video call, at a time that suits you',
-  'An honest assessment of your child’s level and goals',
-  'A custom daily-practice plan built around your child',
+const NEXT_STEPS = [
+  { n: '1', title: 'You book in about 10 seconds', sub: 'Just three quick details — that’s it.' },
+  { n: '2', title: 'We reach out within one business day', sub: 'A real person from Oclef, by phone or email — your choice.' },
+  { n: '3', title: 'Your child’s free 30-minute assessment', sub: 'An honest read on their level, plus a daily-practice plan.' },
 ];
 
 export function FooterForm() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [showMore, setShowMore] = useState(false);
+  const [firstName, setFirstName] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === 'submitting') return;
     const form = e.currentTarget;
+    setFirstName(((new FormData(form).get('parent_first_name') as string) || '').trim());
     setStatus('submitting');
     try {
       if (FORM_ENDPOINT) {
@@ -1225,7 +1241,7 @@ export function FooterForm() {
   return (
     <footer style={{ background: NAVY }} className="text-white pt-20 sm:pt-28 px-5">
       <div className="max-w-5xl mx-auto">
-        <div id="book" className="scroll-mt-20 grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div id="book" className="scroll-mt-20 grid items-start gap-12 lg:grid-cols-[5fr_6fr] lg:gap-14">
           <div>
             <SectionLabel>Get started</SectionLabel>
             <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
@@ -1233,96 +1249,192 @@ export function FooterForm() {
               <span className="font-display-serif italic text-[#eb6a18]">consultation</span>
             </h2>
             <p className="mt-5 text-white/70 leading-relaxed">
-              A relaxed 1-on-1 call — no pressure, no commitment. Here’s what you’ll get:
+              A relaxed 1-on-1 call — no pressure, no commitment.
             </p>
-            <ul className="mt-6 flex flex-col gap-3">
-              {CALL_PROMISES.map((p) => (
-                <li key={p} className="flex items-start gap-3 text-[15px] text-white/85">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#eb6a18]" strokeWidth={2} />
-                  {p}
+
+            <h3 className="mt-9 text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+              What happens next
+            </h3>
+            <ol className="mt-5 flex flex-col gap-6">
+              {NEXT_STEPS.map((s, i) => (
+                <li key={s.n} className="relative flex gap-4">
+                  {i < NEXT_STEPS.length - 1 && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-[13.5px] top-8 -bottom-6 w-px bg-white/12"
+                    />
+                  )}
+                  <span className="relative z-10 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/15 text-sm font-semibold text-[#eb6a18] ring-1 ring-[#eb6a18]/30">
+                    {s.n}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-white">{s.title}</p>
+                    <p className="mt-0.5 text-[13px] leading-relaxed text-white/55">{s.sub}</p>
+                  </div>
                 </li>
               ))}
-            </ul>
-            <img
-              src="/images/yelp-400-families.png"
-              alt="Rated a 5-star business on Yelp by 400+ families"
-              className="mt-8 w-52 rounded-md"
-            />
+            </ol>
+
+            {/* Safety card — only honest proof: the real Yelp badge + the true 30-day guarantee */}
+            <div className="mt-9 rounded-2xl border border-white/12 bg-white/[0.05] p-5">
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#9be7ad]" strokeWidth={2} />
+                <div>
+                  <p className="font-semibold text-white">30-day money-back guarantee</p>
+                  <p className="mt-0.5 text-[13px] text-white/55">
+                    Enroll, try it, and get a full refund within 30 days if it’s not right.
+                  </p>
+                </div>
+              </div>
+              <hr className="my-4 border-white/10" />
+              <img
+                src="/images/yelp-400-families.png"
+                alt="Rated a 5-star business on Yelp by 400+ families"
+                className="w-44 rounded-md"
+              />
+              <p className="mt-2 text-xs text-white/45">Rated 5 stars by 400+ families on Yelp.</p>
+            </div>
           </div>
 
-          {status === 'success' ? (
-            <div className="flex flex-col items-start rounded-2xl border border-white/15 bg-white/[0.06] p-8 sm:p-10">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#00952e]/20 text-[#9be7ad]">
-                <CalendarCheck size={26} strokeWidth={2} />
-              </span>
-              <h3 className="mt-5 text-2xl font-semibold text-white">You’re all set.</h3>
-              <p className="mt-3 text-white/70 leading-relaxed">
-                Thanks — we’ve got your details. A member of the Oclef team will reach out within
-                one business day to schedule your free consultation. Keep an eye on your phone and
-                inbox.
-              </p>
-            </div>
-          ) : (
-            <form className="grid sm:grid-cols-2 gap-4" onSubmit={handleSubmit}>
-              <FloatingField label="Parent first name" name="parent_first_name" required autoComplete="given-name" />
-              <FloatingField label="Parent last name" name="parent_last_name" required autoComplete="family-name" />
-              <FloatingField label="Email address" name="email" type="email" required inputMode="email" autoComplete="email" className="sm:col-span-2" />
-              <FloatingField label="Phone number" name="phone" type="tel" required inputMode="tel" autoComplete="tel" className="sm:col-span-2" />
-              <FloatingField label="Child / children name(s)" name="child_names" autoComplete="off" className="sm:col-span-2" />
-              <div className="relative sm:col-span-2">
-                <select
-                  name="referral_source"
-                  aria-label="Where did you hear about us"
-                  defaultValue=""
-                  className="w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] px-4 py-4 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
-                >
-                  <option value="" disabled className="text-gray-900">
-                    – Where did you hear about us? –
-                  </option>
-                  <option className="text-gray-900">Friend/Family</option>
-                  <option className="text-gray-900">School Flyer</option>
-                  <option className="text-gray-900">Yelp</option>
-                  <option className="text-gray-900">Google</option>
-                  <option className="text-gray-900">Other</option>
-                </select>
-                <ChevronDown
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40"
-                />
-              </div>
-              {status === 'error' && (
-                <p className="sm:col-span-2 -mb-1 text-sm text-[#ffb4a8]">
-                  Something went wrong sending your details. Please try again in a moment.
-                </p>
+          {/* Right — one lit card holding either the form or the success state */}
+          <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-6 shadow-xl shadow-black/20 sm:p-8">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(120%_70%_at_50%_-10%,rgba(255,255,255,0.10),transparent_60%)]"
+            />
+            <div className="relative">
+              {status === 'success' ? (
+                <div>
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#00952e]/20 text-[#9be7ad]">
+                    <CalendarCheck size={26} strokeWidth={2} />
+                  </span>
+                  <h3 className="mt-5 text-2xl font-semibold text-white">
+                    You’re all set{firstName ? `, ${firstName}` : ''}.
+                  </h3>
+                  <p className="mt-3 text-white/70 leading-relaxed">
+                    Thanks — we’ve got your details. Here’s what happens now:
+                  </p>
+                  <ol className="mt-6 flex flex-col gap-4">
+                    {[
+                      'We’ll call or email within one business day',
+                      'We pick a time that suits you',
+                      'Your child’s free 30-minute assessment',
+                    ].map((t, i) => (
+                      <li key={i} className="flex items-center gap-3">
+                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/15 text-sm font-semibold text-[#eb6a18] ring-1 ring-[#eb6a18]/30">
+                          {i + 1}
+                        </span>
+                        <span className="text-[15px] text-white/85">{t}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-6 text-xs text-white/45">
+                    Backed by our 30-day money-back guarantee. No commitment.
+                  </p>
+                </div>
+              ) : (
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="font-display-serif italic text-lg text-white/90">
+                      Tell us where to reach you
+                    </p>
+                    <span className="flex-shrink-0 text-[11px] uppercase tracking-[0.1em] text-white/45">
+                      3 quick details
+                    </span>
+                  </div>
+
+                  <FloatingField label="First name" name="parent_first_name" required autoComplete="given-name" showValid />
+                  <FloatingField label="Email address" name="email" type="email" required inputMode="email" autoComplete="email" showValid />
+                  <FloatingField
+                    label="Phone number"
+                    name="phone"
+                    type="tel"
+                    required
+                    inputMode="tel"
+                    autoComplete="tel"
+                    showValid
+                    helper="So we can reach you to schedule — we never share it."
+                  />
+
+                  <button
+                    type="button"
+                    aria-expanded={showMore}
+                    aria-controls="more-fields"
+                    onClick={() => setShowMore((v) => !v)}
+                    className="flex items-center gap-1.5 self-start text-sm text-white/55 transition-colors hover:text-white/80"
+                  >
+                    <ChevronDown className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`} />
+                    {showMore ? 'Hide optional details' : 'Add a few optional details'}
+                  </button>
+
+                  <div id="more-fields" className={`flex-col gap-4 ${showMore ? 'flex' : 'hidden'}`}>
+                    <FloatingField label="Last name" name="parent_last_name" autoComplete="family-name" />
+                    <FloatingField label="Child / children name(s)" name="child_names" autoComplete="off" />
+                    <div className="relative">
+                      <select
+                        name="referral_source"
+                        aria-label="Where did you hear about us"
+                        defaultValue=""
+                        className="w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] px-4 py-4 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
+                      >
+                        <option value="" disabled className="text-gray-900">
+                          – Where did you hear about us? (optional) –
+                        </option>
+                        <option className="text-gray-900">Friend/Family</option>
+                        <option className="text-gray-900">School Flyer</option>
+                        <option className="text-gray-900">Yelp</option>
+                        <option className="text-gray-900">Google</option>
+                        <option className="text-gray-900">Other</option>
+                      </select>
+                      <ChevronDown
+                        size={18}
+                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40"
+                      />
+                    </div>
+                  </div>
+
+                  {status === 'error' && (
+                    <p
+                      role="status"
+                      aria-live="polite"
+                      className="flex items-start gap-2 rounded-lg border border-[#ffb4a8]/30 bg-[#b9314f]/15 px-3 py-2 text-sm text-[#ffd2ca]"
+                    >
+                      <X className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                      Something went wrong sending your details — please try again. Your details weren’t lost.
+                    </p>
+                  )}
+
+                  <CtaButton type="submit" disabled={status === 'submitting'} fullWidth className="mt-1">
+                    {status === 'submitting' ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" />
+                        Booking…
+                      </>
+                    ) : (
+                      'Book My Free Call'
+                    )}
+                  </CtaButton>
+
+                  <div className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3">
+                    <ShieldCheck className="h-5 w-5 flex-shrink-0 text-[#9be7ad]" strokeWidth={2} />
+                    <p className="text-[13px] text-white/70">
+                      Backed by our 30-day money-back guarantee.{' '}
+                      <span className="text-white/45">No commitment · we never share your details.</span>
+                    </p>
+                  </div>
+                </form>
               )}
-              <CtaButton
-                type="submit"
-                disabled={status === 'submitting'}
-                fullWidth
-                className="sm:col-span-2 mt-2"
-              >
-                {status === 'submitting' ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Booking…
-                  </>
-                ) : (
-                  'Book My Free Consultation'
-                )}
-              </CtaButton>
-              <p className="sm:col-span-2 text-center text-xs text-white/45">
-                Free 30-minute call · no commitment · we never share your details.
-              </p>
-            </form>
-          )}
+            </div>
+          </div>
         </div>
 
         <div className="mt-20 border-t border-white/10 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <img src="/images/oclef-logo-white.png" alt="Oclef" className="h-6 w-auto" />
             <span className="text-xl font-lato">Oclef</span>
+            <span className="font-display-serif italic text-sm text-white/55">Piano, every day.</span>
           </div>
-          <p className="text-white/50 text-sm">
+          <p className="text-white/45 text-xs">
             Copyright © 2026 Oclef. All Rights Reserved.
           </p>
         </div>
