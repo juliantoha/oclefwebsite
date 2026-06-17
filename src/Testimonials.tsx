@@ -141,9 +141,7 @@ function Testimonial({
           {children}
         </blockquote>
 
-        <hr className="mb-4 mt-6 w-10 border-0 border-t-2" style={{ borderColor: '#eb6a18', opacity: 0.85 }} />
-
-        <figcaption className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <figcaption className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           {stars && (
             <div className="flex gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
