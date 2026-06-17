@@ -92,7 +92,7 @@ export function CtaButton({
  * duotone, film grain, a top spotlight and an inset hairline — so the absence of
  * a photo reads as a deliberate monogram, not a broken/missing image.
  */
-function MonogramTile({
+export function MonogramTile({
   initial,
   gradient,
   image,
