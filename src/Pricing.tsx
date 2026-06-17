@@ -99,8 +99,8 @@ const plan: Plan = {
   name: 'Daily Lessons',
   price: '549',
   suffix: '/mo',
-  description: 'Everything your child needs to thrive. No contract, paid monthly.',
-  bg: '#1c1c1c',
+  description: 'Everything your child needs to thrive, all included.',
+  bg: 'linear-gradient(180deg, #0a3349 0%, #01202f 100%)',
   featured: true,
   cta: 'Start With a Free Assessment',
   features: [
@@ -114,10 +114,10 @@ const plan: Plan = {
 
 function PricingCard({ plan }: { plan: Plan }) {
   return (
-    <SpotlightBorder size={460} intensity={0.5} className="h-full p-2 sm:p-3">
+    <SpotlightBorder size={460} intensity={0.7} className="h-full p-2 sm:p-3">
       <div
         className="relative flex h-full flex-col rounded-2xl border border-white/10 p-7 sm:p-8"
-        style={{ backgroundColor: plan.bg }}
+        style={{ background: plan.bg, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)' }}
       >
         {plan.badge && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#eb6a18] px-3 py-1 text-xs font-semibold text-white shadow-lg shadow-[#eb6a18]/30">
@@ -132,10 +132,13 @@ function PricingCard({ plan }: { plan: Plan }) {
 
         <FadeUp delay={0.1}>
           <div className="mt-10 flex items-baseline gap-2">
-            <span className="font-lato text-[2.75rem] leading-none font-light tracking-tight text-white">
+            <span className="font-lato text-5xl leading-none font-bold tracking-tight text-white">
               {plan.price === 'Free' ? 'Free' : `$${plan.price}`}
             </span>
-            {plan.suffix && <span className="text-lg text-white/40">{plan.suffix}</span>}
+            {plan.suffix && <span className="text-lg text-white/70">{plan.suffix}</span>}
+          </div>
+          <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#eb6a18]/80">
+            Billed monthly · no contract
           </div>
         </FadeUp>
 
@@ -165,11 +168,11 @@ function PricingCard({ plan }: { plan: Plan }) {
                 <span
                   className={cn(
                     'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border',
-                    f.included ? 'border-white/20 bg-white/[0.06]' : 'border-white/10 bg-transparent',
+                    f.included ? 'border-[#eb6a18]/30 bg-[#eb6a18]/15' : 'border-white/10 bg-transparent',
                   )}
                 >
                   {f.included ? (
-                    <Check className="h-3 w-3 text-white" strokeWidth={2.5} />
+                    <Check className="h-3 w-3 text-[#eb6a18]" strokeWidth={2.5} />
                   ) : (
                     <X className="h-3 w-3 text-white/50" strokeWidth={2} />
                   )}
@@ -193,29 +196,29 @@ export function PricingSection() {
     >
       <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-10 md:gap-12 lg:gap-16 items-center">
-          {/* Left — copy */}
-          <div>
+          {/* Left — copy (centered on mobile to match the other sections, left-aligned beside the card on desktop) */}
+          <div className="text-center md:text-left">
             <FadeUp>
               <SectionLabel>Tuition</SectionLabel>
             </FadeUp>
             <FadeUp delay={0.1}>
               <h2 className="mt-6 text-3xl sm:text-4xl md:text-5xl font-normal tracking-[-0.02em] leading-[1.05] text-white">
-                Pricing built around{' '}
+                <span className="font-lato font-bold tracking-[-0.03em]">Pricing built around</span>{' '}
                 <span className="font-display-serif italic text-[#eb6a18]">daily progress.</span>
               </h2>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <p className="mt-6 max-w-md text-base text-white/60">
+              <p className="mt-6 max-w-md mx-auto md:mx-0 text-base text-white/60">
                 No contract, paid monthly. Start with a free assessment, then daily lessons built
                 around your child, backed by a 30-day money-back guarantee.
               </p>
             </FadeUp>
             <FadeUp delay={0.3}>
-              <div className="mt-8 flex flex-col items-start gap-4 text-[15px]">
-                <div className="flex items-center gap-2 text-white/50">
-                  <ShieldCheck className="h-4 w-4 text-[#eb6a18]" strokeWidth={1.5} />
+              <div className="mt-8 flex flex-col items-center md:items-start gap-4 text-[15px]">
+                <p className="text-white/50">
+                  <ShieldCheck className="mr-1.5 inline-block h-4 w-4 align-[-3px] text-[#eb6a18]" strokeWidth={1.5} />
                   30-day money-back guarantee on all new enrollments.
-                </div>
+                </p>
                 <button
                   onClick={scrollToForm}
                   className="text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline"
@@ -228,7 +231,7 @@ export function PricingSection() {
               <img
                 src="/images/yelp-400-families.png"
                 alt="Rated a 5-star business on Yelp by 400+ families"
-                className="mt-8 w-52 rounded-md"
+                className="mt-8 w-52 mx-auto md:mx-0 rounded-md"
               />
             </FadeUp>
           </div>

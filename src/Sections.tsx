@@ -16,7 +16,6 @@ import {
   Minus,
   Phone,
   MapPin,
-  Sparkle,
   Sparkles,
   Activity,
   Play,
@@ -31,10 +30,8 @@ export const scrollToForm = () =>
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
-      <Sparkle className="h-3 w-3 shrink-0" strokeWidth={1.5} />
+    <span className="inline-flex items-center text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
       {children}
-      <Sparkle className="h-3 w-3 shrink-0" strokeWidth={1.5} />
     </span>
   );
 }
@@ -90,13 +87,63 @@ export function CtaButton({
   );
 }
 
+/**
+ * Until real portraits exist, an initial sits in a crafted "crest" — brand-navy
+ * duotone, film grain, a top spotlight and an inset hairline — so the absence of
+ * a photo reads as a deliberate monogram, not a broken/missing image.
+ */
+function MonogramTile({
+  initial,
+  gradient,
+  image,
+  alt,
+  chip,
+  className = '',
+  initialClassName = 'text-6xl',
+}: {
+  initial: string;
+  gradient: string;
+  image?: string;
+  alt?: string;
+  chip?: string;
+  className?: string;
+  initialClassName?: string;
+}) {
+  return (
+    <div
+      className={`relative flex items-center justify-center overflow-hidden ${className}`}
+      style={{ background: gradient }}
+    >
+      {image ? (
+        <img src={image} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <>
+          <div className="noise-overlay absolute inset-0" />
+          <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,rgba(255,255,255,0.18),transparent_60%)]" />
+          <span
+            className={`relative font-display-serif italic text-white/90 [text-shadow:0_2px_20px_rgba(0,0,0,0.3)] ${initialClassName}`}
+          >
+            {initial}
+          </span>
+        </>
+      )}
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/12" />
+      {chip && (
+        <span className="absolute bottom-3 left-3 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-medium text-white/90 backdrop-blur">
+          {chip}
+        </span>
+      )}
+    </div>
+  );
+}
+
 /* ─────────────────────────  Intro band  ───────────────────────── */
 export function IntroBand() {
   return (
     <section id="intro" className="scroll-mt-20 bg-white py-16 sm:py-24 px-5">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl leading-[1.1]">
-          Weekly lessons{' '}
+          <span className="font-lato font-bold tracking-[-0.03em]">Weekly lessons</span>{' '}
           <span className="font-display-serif italic text-[#eb6a18]">don’t work.</span>
         </h2>
         <p className="mt-6 text-lg sm:text-xl text-gray-600 leading-relaxed">
@@ -198,7 +245,7 @@ export function HowItWorks() {
         <div className="text-center max-w-2xl mx-auto">
           <SectionLabel>How it works</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
-            Three parts,{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">Three parts,</span>{' '}
             <span className="font-display-serif italic">one complete education</span>
           </h2>
         </div>
@@ -256,7 +303,9 @@ function Mark({ on }: { on: boolean }) {
 }
 
 export function Comparison() {
-  const [swiped, setSwiped] = useState(false);
+  // Track whether the table has been swiped all the way to the Oclef column, so
+  // the swipe cues stay up until the user has actually seen Oclef.
+  const [atEnd, setAtEnd] = useState(false);
   const strongTint = 'rgba(235,106,24,0.30)';
   const oclefTint = 'rgba(235,106,24,0.16)';
   const glow = '0 0 34px rgba(235,106,24,0.28)';
@@ -273,7 +322,7 @@ export function Comparison() {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <SectionLabel>The difference</SectionLabel>
           <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
-            See how Oclef{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">See how Oclef</span>{' '}
             <span className="font-display-serif italic text-[#eb6a18]">compares</span>
           </h2>
           <p className="mt-5 text-white/70 leading-relaxed">
@@ -286,16 +335,22 @@ export function Comparison() {
         {/* Swipe hint — the table overflows on small screens */}
         <div
           className={`sm:hidden mb-4 flex justify-center transition-opacity duration-300 ${
-            swiped ? 'opacity-0' : 'opacity-100'
+            atEnd ? 'opacity-0' : 'opacity-100'
           }`}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs text-white/80">
-            Swipe to compare
-            <ArrowRight size={14} className="animate-swipe" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#eb6a18]/40 bg-[#eb6a18]/15 px-3 py-1.5 text-xs font-semibold text-white">
+            Swipe to see how Oclef compares
+            <ArrowRight size={14} className="animate-swipe text-[#eb6a18]" />
           </span>
         </div>
 
-        <div className="overflow-x-auto" onScroll={() => setSwiped(true)}>
+        <div
+          className="overflow-x-auto"
+          onScroll={(e) => {
+            const el = e.currentTarget;
+            setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 8);
+          }}
+        >
           <div className="min-w-[480px] relative">
             {/* Header */}
             <div className="grid grid-cols-[1.4fr_repeat(4,1fr)] gap-2 sm:gap-3">
@@ -354,6 +409,14 @@ export function Comparison() {
                       <span className="font-bold leading-tight">{row.feature}</span>
                       <span className="text-white/55 text-xs leading-snug">
                         What actually decides if your child learns piano
+                      </span>
+                      <span
+                        className={`sm:hidden mt-1.5 inline-flex items-center gap-1 rounded-full bg-[#eb6a18] px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-[#eb6a18]/30 transition-opacity duration-300 ${
+                          atEnd ? 'opacity-0' : 'opacity-100'
+                        }`}
+                      >
+                        Swipe to see Oclef
+                        <ArrowRight size={12} className="animate-swipe" />
                       </span>
                     </>
                   ) : (
@@ -444,7 +507,7 @@ export function OclefPro() {
         <div className="text-center mb-12 sm:mb-16">
           <SectionLabel>Oclef Pro</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
-            Unlocking potential,{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">Unlocking potential,</span>{' '}
             <span className="font-display-serif italic">one note at a time</span>
           </h2>
           <p className="mt-6 text-gray-600 text-base sm:text-lg leading-relaxed">
@@ -556,7 +619,7 @@ export function VideoTestimonials() {
         <div className="text-center max-w-2xl mx-auto mb-14">
           <SectionLabel>Family stories</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
-            Real families.{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">Real families.</span>{' '}
             <span className="font-display-serif italic text-[#eb6a18]">Real stories.</span>
           </h2>
           <p className="mt-5 text-gray-600 leading-relaxed">
@@ -778,7 +841,8 @@ export function GetStarted() {
         <div className="text-center max-w-2xl mx-auto mb-14">
           <SectionLabel>Getting started</SectionLabel>
           <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
-            Starting is <span className="font-display-serif italic text-[#eb6a18]">simple</span>
+            <span className="font-lato font-bold tracking-[-0.03em]">Starting is</span>{' '}
+            <span className="font-display-serif italic text-[#eb6a18]">simple</span>
           </h2>
           <p className="mt-5 text-white/70 leading-relaxed">
             Three easy steps, and the first one is completely free.
@@ -855,7 +919,7 @@ export function FAQ() {
         <div className="text-center mb-14">
           <SectionLabel>FAQ</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
-            Frequently asked{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">Frequently asked</span>{' '}
             <span className="font-display-serif italic">questions</span>
           </h2>
         </div>
@@ -912,7 +976,7 @@ export function Locations() {
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
           <SectionLabel>Our community</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-3xl sm:text-5xl leading-tight">
-            Trusted by families across{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">Trusted by families across</span>{' '}
             <span className="font-display-serif italic">America</span>
           </h2>
           <p className="mt-4 sm:mt-5 text-base text-gray-600 leading-relaxed">
@@ -965,14 +1029,14 @@ type Teacher = {
   years?: string;
 };
 const TEACHERS: Teacher[] = [
-  { name: 'Dr. Phong', title: 'Co-Founder', initial: 'P', gradient: 'linear-gradient(160deg, #6aa9a3 0%, #2f6460 100%)' },
-  { name: 'Dr. Matthew', title: 'Piano Professor', initial: 'M', gradient: 'linear-gradient(160deg, #e8a87c 0%, #b85c38 100%)' },
-  { name: 'Dr. I-Lin', title: 'Piano Professor', initial: 'I', gradient: 'linear-gradient(160deg, #9aa884 0%, #56653f 100%)' },
-  { name: 'Dr. Ludwig', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(160deg, #7494a8 0%, #2e4a5c 100%)' },
-  { name: 'Dr. Justin', title: 'Piano Professor', initial: 'J', gradient: 'linear-gradient(160deg, #c98c93 0%, #7a4a52 100%)' },
-  { name: 'Ms. Yuliya', title: 'Piano Professor', initial: 'Y', gradient: 'linear-gradient(160deg, #a585b8 0%, #503a5e 100%)' },
-  { name: 'Mr. Connor', title: 'Piano Professor', initial: 'C', gradient: 'linear-gradient(160deg, #d3a15f 0%, #8a5e2a 100%)' },
-  { name: 'Dr. Lucy', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(160deg, #8f93c4 0%, #45497e 100%)' },
+  { name: 'Dr. Phong', title: 'Co-Founder', initial: 'P', gradient: 'linear-gradient(155deg, #0f5e80 0%, #002642 100%)' },
+  { name: 'Dr. Matthew', title: 'Piano Professor', initial: 'M', gradient: 'linear-gradient(155deg, #14607a 0%, #012c40 100%)' },
+  { name: 'Dr. I-Lin', title: 'Piano Professor', initial: 'I', gradient: 'linear-gradient(155deg, #0d5577 0%, #002642 100%)' },
+  { name: 'Dr. Ludwig', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(155deg, #1a6e84 0%, #01202f 100%)' },
+  { name: 'Dr. Justin', title: 'Piano Professor', initial: 'J', gradient: 'linear-gradient(155deg, #0a4d68 0%, #021f33 100%)' },
+  { name: 'Ms. Yuliya', title: 'Piano Professor', initial: 'Y', gradient: 'linear-gradient(155deg, #166a82 0%, #013048 100%)' },
+  { name: 'Mr. Connor', title: 'Piano Professor', initial: 'C', gradient: 'linear-gradient(155deg, #0e5170 0%, #00263f 100%)' },
+  { name: 'Dr. Lucy', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(155deg, #1c6379 0%, #02222e 100%)' },
 ];
 
 export function MeetTheTeachers() {
@@ -982,7 +1046,7 @@ export function MeetTheTeachers() {
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <SectionLabel>Our teachers</SectionLabel>
           <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
-            Taught by{' '}
+            <span className="font-lato font-bold tracking-[-0.03em]">Taught by</span>{' '}
             <span className="font-display-serif italic">world-class teachers</span>
           </h2>
           <p className="mt-5 text-gray-600 leading-relaxed">
@@ -994,18 +1058,15 @@ export function MeetTheTeachers() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-6">
           {TEACHERS.map((t) => (
             <div key={t.name} className="text-center">
-              <div
-                className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-sm"
-                style={{ background: t.gradient }}
-              >
-                {t.image ? (
-                  <img src={t.image} alt={t.name} className="absolute inset-0 h-full w-full object-cover" />
-                ) : (
-                  <span className="absolute inset-0 flex items-center justify-center font-lato text-6xl font-light text-white/80">
-                    {t.initial}
-                  </span>
-                )}
-              </div>
+              <MonogramTile
+                initial={t.initial}
+                gradient={t.gradient}
+                image={t.image}
+                alt={t.name}
+                chip={t.degree}
+                className="aspect-[4/5] rounded-2xl shadow-sm"
+                initialClassName="text-6xl"
+              />
               <h3 className="mt-4 font-semibold text-gray-900">{t.name}</h3>
               <p className="text-sm text-[#eb6a18]">{t.title}</p>
               {t.degree && (
@@ -1044,43 +1105,37 @@ const FOUNDER_PARAS = [
 export function FounderNote() {
   return (
     <section className="bg-[#fff6ed] py-20 sm:py-28 px-5">
-      <div className="max-w-5xl mx-auto">
-        <div className="grid lg:grid-cols-[300px_1fr] gap-10 lg:gap-16 items-start">
-          {/* Founder photo (placeholder) */}
-          <div className="mx-auto w-full max-w-[280px] lg:mx-0 lg:sticky lg:top-24">
-            <div
-              className="aspect-[4/5] rounded-2xl overflow-hidden shadow-md flex items-center justify-center"
-              style={{ background: 'linear-gradient(160deg, #0d5577 0%, #002642 100%)' }}
-            >
-              <span className="font-lato text-6xl font-light text-white/70">JT</span>
-            </div>
-            <p className="mt-4 text-center lg:text-left font-semibold text-gray-900">Julian Toha</p>
-            <p className="text-center lg:text-left text-sm text-gray-500">Founder, Oclef</p>
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center">
+          <SectionLabel>A note from our founder</SectionLabel>
+          <h2 className="mt-4 text-gray-900 text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1]">
+            <span className="font-lato font-bold tracking-[-0.03em]">The problem was never</span>{' '}
+            <span className="font-display-serif italic text-[#eb6a18]">your child.</span>
+          </h2>
+        </div>
+
+        <div className="mt-8 space-y-5 text-gray-600 text-base leading-relaxed">
+          {FOUNDER_PARAS.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+
+        {/* Signature — the founder's portrait sits organically beside his signature */}
+        <div className="mt-10 flex items-center justify-center gap-4">
+          <MonogramTile
+            initial="JT"
+            gradient="linear-gradient(160deg, #0d5577 0%, #002642 100%)"
+            className="h-16 w-16 shrink-0 rounded-full shadow-md ring-1 ring-black/5"
+            initialClassName="text-2xl"
+          />
+          <div className="text-left">
+            <p className="font-display-serif italic text-3xl leading-none text-gray-800">Julian Toha</p>
+            <p className="mt-1.5 text-sm text-gray-500">Founder, Oclef</p>
           </div>
+        </div>
 
-          {/* The note */}
-          <div>
-            <SectionLabel>A note from our founder</SectionLabel>
-            <h2 className="mt-4 text-gray-900 text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1]">
-              The problem was never{' '}
-              <span className="font-display-serif italic text-[#eb6a18]">your child.</span>
-            </h2>
-            <div className="mt-6 space-y-5 text-gray-600 text-base leading-relaxed">
-              {FOUNDER_PARAS.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-
-            {/* Signature (placeholder) */}
-            <div className="mt-8">
-              <p className="font-display-serif italic text-3xl text-gray-800">Julian Toha</p>
-              <p className="mt-1 text-sm text-gray-500">Founder, Oclef</p>
-            </div>
-
-            <div className="mt-8">
-              <CtaButton size="lg">Talk With Us</CtaButton>
-            </div>
-          </div>
+        <div className="mt-8 flex justify-center">
+          <CtaButton size="lg">Talk With Us</CtaButton>
         </div>
       </div>
     </section>
@@ -1174,7 +1229,7 @@ export function FooterForm() {
           <div>
             <SectionLabel>Get started</SectionLabel>
             <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
-              Book your free{' '}
+              <span className="font-lato font-bold tracking-[-0.03em]">Book your free</span>{' '}
               <span className="font-display-serif italic text-[#eb6a18]">consultation</span>
             </h2>
             <p className="mt-5 text-white/70 leading-relaxed">
