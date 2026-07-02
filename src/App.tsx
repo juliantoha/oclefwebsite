@@ -79,7 +79,11 @@ const NAV_ITEMS = [
 ];
 
 const scrollToId = (id: string) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById(id)?.scrollIntoView({
+    // JS smooth scrolling isn't auto-disabled for reduced-motion users.
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    block: 'start',
+  });
 
 export default function App() {
   const scrollWrapRef = useRef<HTMLDivElement>(null);
@@ -317,10 +321,13 @@ export default function App() {
       <Locations />
       <FooterForm />
 
-      {/* Always-in-reach booking CTA for mobile/tablet (desktop has the nav button). */}
+      {/* Always-in-reach booking CTA for mobile/tablet (desktop has the nav button).
+          visibility is in the transition so the hidden bar isn't keyboard-focusable
+          (it flips at the end of the slide-out, start of the slide-in). */}
       <div
-        className={`fixed inset-x-0 bottom-0 z-[90] lg:hidden border-t border-black/5 bg-[#fff6ed]/95 px-4 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md transition-transform duration-300 ${
-          showSticky ? 'translate-y-0' : 'translate-y-full'
+        aria-hidden={!showSticky}
+        className={`fixed inset-x-0 bottom-0 z-[90] lg:hidden border-t border-black/5 bg-[#fff6ed]/95 px-4 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md transition-[transform,visibility] duration-300 ${
+          showSticky ? 'translate-y-0 visible' : 'translate-y-full invisible'
         }`}
         style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
       >

@@ -15,8 +15,13 @@ function FadeUp({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [shown, setShown] = useState(false);
+  // Reduced-motion users get content in place immediately (inline transitions
+  // bypass the CSS media-query overrides, so gate it here).
+  const reduce =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const [shown, setShown] = useState(reduce);
   useEffect(() => {
+    if (reduce) return;
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -30,7 +35,7 @@ function FadeUp({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [reduce]);
   return (
     <div
       ref={ref}
@@ -38,7 +43,9 @@ function FadeUp({
       style={{
         opacity: shown ? 1 : 0,
         transform: shown ? 'translateY(0)' : 'translateY(24px)',
-        transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1)',
+        transition: reduce
+          ? 'none'
+          : 'opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1)',
         transitionDelay: `${delay}s`,
       }}
     >
@@ -60,20 +67,37 @@ function SpotlightBorder({
   intensity?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const setVar = (x: string, y: string) => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.setProperty('--spot-x', x);
-    el.style.setProperty('--spot-y', y);
+  // Mouse-only (a tap shouldn't flash the ring), rAF-throttled (one layout
+  // read + style write per frame), and hidden/shown via --spot-o so the CSS
+  // opacity transition fades the glow in place instead of snapping it away.
+  const pos = useRef({ x: 0, y: 0 });
+  const frame = useRef(0);
+  const hide = () => {
+    if (frame.current) {
+      cancelAnimationFrame(frame.current);
+      frame.current = 0;
+    }
+    ref.current?.style.setProperty('--spot-o', '0');
   };
   return (
     <div
       ref={ref}
       onPointerMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        setVar(`${e.clientX - r.left}px`, `${e.clientY - r.top}px`);
+        if (e.pointerType !== 'mouse') return;
+        pos.current = { x: e.clientX, y: e.clientY };
+        if (frame.current) return;
+        frame.current = requestAnimationFrame(() => {
+          frame.current = 0;
+          const el = ref.current;
+          if (!el) return;
+          const r = el.getBoundingClientRect();
+          el.style.setProperty('--spot-x', `${pos.current.x - r.left}px`);
+          el.style.setProperty('--spot-y', `${pos.current.y - r.top}px`);
+          el.style.setProperty('--spot-o', '1');
+        });
       }}
-      onPointerLeave={() => setVar('-9999px', '-9999px')}
+      onPointerLeave={hide}
+      onPointerCancel={hide}
       className={cn('spotlight-border relative rounded-[1.35rem]', className)}
       style={{ ['--size' as string]: `${size}px`, ['--intensity' as string]: `${intensity}` } as React.CSSProperties}
     >
@@ -230,8 +254,12 @@ export function PricingSection() {
             <FadeUp delay={0.4}>
               <img
                 src="/images/yelp-400-families.png"
+                width={270}
+                height={120}
+                loading="lazy"
+                decoding="async"
                 alt="Rated a 5-star business on Yelp by 400+ families"
-                className="mt-8 w-52 mx-auto md:mx-0 rounded-md"
+                className="mt-8 w-52 h-auto mx-auto md:mx-0 rounded-md"
               />
             </FadeUp>
           </div>

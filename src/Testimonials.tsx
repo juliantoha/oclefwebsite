@@ -54,7 +54,9 @@ function Annotate({
     };
   }, [type, color, strokeWidth, delay]);
   return (
-    <span ref={ref} className="relative whitespace-nowrap">
+    // Only circles need nowrap (a wrapped target breaks the ellipse);
+    // underlines are configured multiline and may wrap freely.
+    <span ref={ref} className={type === 'circle' ? 'relative whitespace-nowrap' : 'relative'}>
       {children}
     </span>
   );
@@ -143,9 +145,9 @@ function Testimonial({
 
         <figcaption className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           {stars && (
-            <div className="flex gap-0.5">
+            <div className="flex gap-0.5" role="img" aria-label="Rated 5 out of 5 stars">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={14} className="text-[#eb6a18]" fill="#eb6a18" />
+                <Star key={i} size={14} aria-hidden="true" className="text-[#eb6a18]" fill="#eb6a18" />
               ))}
             </div>
           )}

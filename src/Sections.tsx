@@ -25,7 +25,11 @@ import {
 const NAVY = '#004a69';
 
 export const scrollToForm = () =>
-  document.getElementById('book')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('book')?.scrollIntoView({
+    // JS smooth scrolling isn't auto-disabled for reduced-motion users.
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    block: 'start',
+  });
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -79,7 +83,7 @@ export function CtaButton({
       type={type}
       onClick={handleClick}
       disabled={disabled}
-      className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold leading-none transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 ${sizes} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold leading-none transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#eb6a18] focus-visible:ring-offset-2 ${sizes} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
     >
       {children}
     </button>
@@ -108,13 +112,23 @@ export function MonogramTile({
   className?: string;
   initialClassName?: string;
 }) {
+  const [loaded, setLoaded] = useState(false);
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${className}`}
       style={{ background: gradient }}
     >
       {image ? (
-        <img src={image} alt={alt} className="absolute inset-0 h-full w-full object-cover" />
+        // Real portraits lazy-load and fade in over the gradient, so there is
+        // never a blank frame or an abrupt pop.
+        <img
+          src={image}
+          alt={alt ?? ''}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        />
       ) : (
         <>
           <div className="noise-overlay absolute inset-0" />
@@ -126,7 +140,7 @@ export function MonogramTile({
           </span>
         </>
       )}
-      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/12" />
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/[0.12]" />
       {chip && (
         <span className="absolute bottom-3 left-3 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-medium text-white/90 backdrop-blur">
           {chip}
@@ -160,6 +174,8 @@ export function IntroBand() {
         <div className="mt-12 flex flex-col items-center gap-2">
           <img
             src="/images/yelp-400-families.png"
+            width={270}
+            height={120}
             alt="Rated a 5-star business on Yelp by 400+ families"
             className="h-auto w-60"
           />
@@ -253,7 +269,7 @@ export function HowItWorks() {
           {STEPS.map((step, i) => (
             <div
               key={step.title}
-              className="group relative flex flex-col gap-5 rounded-3xl border border-gray-100 bg-white p-8 shadow-[0_4px_24px_rgba(17,24,39,0.05)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#eb6a18]/20 hover:shadow-[0_18px_48px_rgba(17,24,39,0.12)]"
+              className="group relative flex flex-col gap-5 rounded-2xl border border-gray-100 bg-white p-8 shadow-[0_4px_24px_rgba(17,24,39,0.05)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#eb6a18]/20 hover:shadow-[0_18px_48px_rgba(17,24,39,0.12)]"
             >
               <div className="flex items-center justify-between">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eb6a18]/10 transition-colors duration-300 group-hover:bg-[#eb6a18]/15">
@@ -296,15 +312,27 @@ function Mark({ on }: { on: boolean }) {
       className="inline-flex items-center justify-center w-7 h-7 rounded-full"
       style={{ background: on ? '#00952e' : '#b9314f' }}
     >
-      {on ? <Check size={16} className="text-white" /> : <X size={16} className="text-white" />}
+      {on ? (
+        <Check size={16} aria-hidden="true" className="text-white" />
+      ) : (
+        <X size={16} aria-hidden="true" className="text-white" />
+      )}
+      <span className="sr-only">{on ? 'Yes' : 'No'}</span>
     </span>
   );
 }
 
 export function Comparison() {
-  // Track whether the table has been swiped all the way to the Oclef column, so
-  // the swipe cues stay up until the user has actually seen Oclef.
+  // One-way latch: the swipe cues stay up until the user has actually seen the
+  // Oclef column, then never return (swiping back must not revive them).
   const [atEnd, setAtEnd] = useState(false);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // If the table fits without overflow (mid-width viewports), there is
+    // nothing to swipe — latch immediately so the cues never show.
+    const el = scrollerRef.current;
+    if (el && el.scrollWidth - el.clientWidth <= 8) setAtEnd(true);
+  }, []);
   const strongTint = 'rgba(235,106,24,0.30)';
   const oclefTint = 'rgba(235,106,24,0.16)';
   const glow = '0 0 34px rgba(235,106,24,0.28)';
@@ -344,30 +372,35 @@ export function Comparison() {
         </div>
 
         <div
+          ref={scrollerRef}
           className="overflow-x-auto"
           onScroll={(e) => {
+            if (atEnd) return;
             const el = e.currentTarget;
-            setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 8);
+            if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 8) setAtEnd(true);
           }}
         >
-          <div className="min-w-[480px] relative">
+          <div className="min-w-[480px] relative" role="table" aria-label="How Oclef compares to other ways of learning piano">
             {/* Header */}
-            <div className="grid grid-cols-[1.4fr_repeat(4,1fr)] gap-2 sm:gap-3">
+            <div role="row" className="grid grid-cols-[1.4fr_repeat(4,1fr)] gap-2 sm:gap-3">
               <div
+                role="columnheader"
                 className="liquid-glass rounded-t-xl flex items-center px-4 py-4 text-sm font-semibold text-white/80"
-                style={{ position: 'sticky', left: 0, zIndex: 20, backgroundColor: col1Bg }}
+                style={{ position: 'sticky', left: 0, zIndex: 20, backgroundColor: col1Bg, backdropFilter: 'none' }}
               >
                 Features
               </div>
               {COMP_COLS.map((c) => (
                 <div
                   key={c}
+                  role="columnheader"
                   className="liquid-glass rounded-t-xl px-2 py-4 text-center text-white/80 text-sm font-semibold leading-tight"
                 >
                   {c}
                 </div>
               ))}
               <div
+                role="columnheader"
                 className="liquid-glass rounded-t-xl px-2 py-4 text-center text-white text-lg font-bold font-lato"
                 style={{ background: 'rgba(235,106,24,0.9)' }}
               >
@@ -376,14 +409,16 @@ export function Comparison() {
             </div>
 
             {/* Rows */}
-            {COMP_ROWS.map((row, ri) => (
+            {COMP_ROWS.map((row) => (
               <div
                 key={row.feature}
+                role="row"
                 className={`grid grid-cols-[1.4fr_repeat(4,1fr)] gap-2 sm:gap-3 mt-2 sm:mt-3 ${
-                  row.highlight ? 'relative z-10' : ''
+                  row.highlight ? 'relative z-30' : ''
                 }`}
               >
                 <div
+                  role="cell"
                   className={`liquid-glass rounded-xl px-4 flex text-white text-sm sm:text-base ${
                     row.highlight
                       ? 'flex-col items-start justify-center gap-1 py-4 ring-1 ring-[#eb6a18]/60'
@@ -392,9 +427,12 @@ export function Comparison() {
                   style={{
                     // Inline position overrides liquid-glass's position:relative so the
                     // label column actually pins while the row scrolls horizontally.
+                    // backdropFilter off: the opaque backing makes the blur pure waste
+                    // on the compositor during horizontal swipes.
                     position: 'sticky',
                     left: 0,
                     zIndex: 20,
+                    backdropFilter: 'none',
                     ...(row.highlight
                       ? { background: `linear-gradient(${strongTint}, ${strongTint}), ${col1Bg}`, boxShadow: glow }
                       : { backgroundColor: col1Bg }),
@@ -425,6 +463,7 @@ export function Comparison() {
                 {row.values.map((v, ci) => (
                   <div
                     key={ci}
+                    role="cell"
                     className={`liquid-glass rounded-xl flex items-center justify-center min-h-[56px] ${
                       row.highlight ? 'ring-1 ring-[#eb6a18]/50' : ''
                     }`}
@@ -434,6 +473,7 @@ export function Comparison() {
                   </div>
                 ))}
                 <div
+                  role="cell"
                   className={`liquid-glass rounded-xl flex items-center justify-center min-h-[56px] ${
                     row.highlight ? 'ring-2 ring-[#eb6a18]' : ''
                   }`}
@@ -444,7 +484,6 @@ export function Comparison() {
                 >
                   <Mark on={true} />
                 </div>
-                {ri === 0 && <span className="sr-only">Oclef column</span>}
               </div>
             ))}
           </div>
@@ -541,7 +580,7 @@ export function OclefPro() {
                 <button
                   onClick={() => setOpen(isOpen ? -1 : i)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
+                  className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#eb6a18]/50"
                 >
                   <span className="flex items-center gap-4">
                     <span
@@ -631,15 +670,27 @@ const STORY_CARDS: StoryCard[] = [
 
 export function VideoTestimonials() {
   const [active, setActive] = useState<StoryCard | null>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const reduceMotion =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
     if (!active) return;
+    // Lock scroll, compensating for the scrollbar gutter so the page doesn't
+    // shift sideways on browsers with classic scrollbars.
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+    // Move focus into the dialog and restore it on close (aria-modal contract).
+    const prevFocus = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setActive(null);
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
       window.removeEventListener('keydown', onKey);
+      prevFocus?.focus?.();
     };
   }, [active]);
 
@@ -663,7 +714,7 @@ export function VideoTestimonials() {
             <button
               key={s.name}
               onClick={() => setActive(s)}
-              className="group isolate relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl text-left"
+              className="group isolate relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#eb6a18] focus-visible:ring-offset-2"
             >
               {/* Media: a real video plays muted/looping inline as a silent preview;
                   tapping the card opens the lightbox to enlarge it with sound. Falls
@@ -673,7 +724,7 @@ export function VideoTestimonials() {
                   src={s.video}
                   muted
                   loop
-                  autoPlay
+                  autoPlay={!reduceMotion}
                   playsInline
                   preload="metadata"
                   className="absolute inset-0 h-full w-full rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
@@ -711,23 +762,24 @@ export function VideoTestimonials() {
       {/* Video lightbox */}
       {active && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 sm:p-6"
+          className="lightbox-in fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 sm:p-6"
           onClick={() => setActive(null)}
           role="dialog"
           aria-modal="true"
           aria-label={`${active.name} story`}
         >
-          <div className="relative w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
+          <div className="lightbox-panel-in relative w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
             <button
+              ref={closeRef}
               onClick={() => setActive(null)}
               aria-label="Close"
-              className="absolute -top-11 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/80 transition-colors hover:bg-white/20 hover:text-white"
+              className="absolute -top-11 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/80 transition-colors hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             >
               <X size={20} />
             </button>
             <div className="aspect-video overflow-hidden rounded-2xl shadow-2xl">
               {active.video ? (
-                <video src={active.video} controls autoPlay className="h-full w-full bg-black" />
+                <video src={active.video} controls autoPlay playsInline className="h-full w-full bg-black" />
               ) : (
                 <div
                   className="flex h-full w-full flex-col items-center justify-center gap-4 px-6 text-center"
@@ -813,10 +865,19 @@ function CountUp({ target, prefix = '', suffix = '', duration = 1500 }: {
     };
   }, [target, duration]);
   return (
-    <span ref={ref}>
-      {prefix}
-      {val}
-      {suffix}
+    // An invisible twin of the final value reserves the full footprint, so the
+    // centered stat doesn't jitter sideways while the digits count up.
+    <span ref={ref} className="relative inline-block tabular-nums">
+      <span className="invisible" aria-hidden="true">
+        {prefix}
+        {target}
+        {suffix}
+      </span>
+      <span className="absolute inset-0">
+        {prefix}
+        {val}
+        {suffix}
+      </span>
     </span>
   );
 }
@@ -958,22 +1019,44 @@ export function FAQ() {
           {FAQS.map((item, i) => {
             const isOpen = open === i;
             return (
-              <div key={i} className="rounded-xl bg-white border border-gray-100 overflow-hidden">
+              <div
+                key={i}
+                className={`overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${
+                  isOpen
+                    ? 'border-[#eb6a18]/40 shadow-xl shadow-gray-900/[0.06]'
+                    : 'border-gray-100 hover:border-gray-300'
+                }`}
+              >
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 text-left px-6 py-5"
+                  aria-expanded={isOpen}
+                  className="w-full flex items-center justify-between gap-4 text-left px-6 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#eb6a18]/50"
                 >
                   <span className="font-semibold text-gray-900">{item.q}</span>
                   <ChevronDown
                     size={20}
-                    className={`text-[#eb6a18] shrink-0 transition-transform ${
-                      isOpen ? 'rotate-180' : ''
+                    className={`shrink-0 transition-transform duration-300 ${
+                      isOpen ? 'rotate-180 text-[#eb6a18]' : 'text-gray-400'
                     }`}
                   />
                 </button>
-                {isOpen && (
-                  <p className="px-6 pb-5 -mt-1 text-gray-600 leading-relaxed">{item.a}</p>
-                )}
+                {/* Same grid-rows treatment as the Oclef Pro accordion: content
+                    stays mounted and the height animates smoothly. */}
+                <div
+                  className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                    isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p
+                      className={`px-6 pb-5 -mt-1 text-gray-600 leading-relaxed transition-opacity duration-300 ${
+                        isOpen ? 'opacity-100 delay-100' : 'opacity-0'
+                      }`}
+                    >
+                      {item.a}
+                    </p>
+                  </div>
+                </div>
               </div>
             );
           })}
@@ -1020,7 +1103,7 @@ export function Locations() {
             <a
               key={loc.name}
               href={`tel:${loc.phone.replace(/[^0-9]/g, '')}`}
-              className="group relative flex items-start gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#eb6a18]/40 hover:shadow-xl hover:shadow-gray-200/60"
+              className="group relative flex items-start gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#eb6a18]/40 hover:shadow-xl hover:shadow-gray-200/60 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#eb6a18]/50 focus-visible:ring-offset-2"
             >
               <div className="flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/10 transition-colors duration-300 group-hover:bg-[#eb6a18]/20">
                 <MapPin size={18} className="text-[#eb6a18] sm:hidden" strokeWidth={1.75} />
@@ -1125,7 +1208,7 @@ export function MeetTheTeachers() {
 const FOUNDER_PARAS = [
   'In my last year of touring as a concert pianist I kept hearing the same problem. “My nephew quit piano.” “My daughter fights me every time she practices.” Different cities, same quiet defeat. So I went looking for why.',
   'What I found is a quiet epidemic almost no one names. Millions of children are failing at the piano inside their own homes, and parents draw the only conclusion the situation offers. “Piano isn’t for them.” “The teacher wasn’t a good fit.” “My child isn’t talented.” None of it is true. The child is not failing. The system is. It hands a child one lesson a week, then sends them home to practice alone for six days. Inside that design, 83% drop out or stay musically illiterate within three years.',
-  'So I stopped touring, moved to the Bay Area, and went to work inside a struggling piano school to see the problem from the floor. Then I opened a software company, Oclef, and we rebuilt those six days. Every day at the piano. A real feedback loop in the room, catching the mistake the moment it happens and building the right habit in its place. A path shaped around the child by people who know them by name.',
+  'So I stopped touring, moved to the Bay Area, and went to work inside a struggling piano school to see the problem from the floor. There I met my co-founder, Phong Le, and together we rebuilt those six days between lessons into what is now Piano Every Day. A real feedback loop in the room, catching the mistake the moment it happens and building the right habit in its place. A path shaped around the child by people who know them by name.',
   'If your child has already quit piano or is having trouble getting to the piano every day, talk with us before you give up.',
   'And if they are just beginning, you are lucky.',
   'Because what your child learns here is not just piano. They learn how to focus, how to be confident, how to persist when doing something hard, how to recover, and how to begin again, tomorrow.',
@@ -1233,14 +1316,13 @@ function FloatingField({
 const FORM_ENDPOINT = 'https://formspree.io/f/xykaorvo';
 
 const NEXT_STEPS = [
-  { n: '1', title: 'You book in about 10 seconds', sub: 'Just three quick details — that’s it.' },
+  { n: '1', title: 'You book in under a minute', sub: 'A few quick details — that’s it.' },
   { n: '2', title: 'We reach out within one business day', sub: 'A real person from Oclef, by phone or email — your choice.' },
   { n: '3', title: 'Your child’s free 30-minute assessment', sub: 'An honest read on their level, plus a daily-practice plan.' },
 ];
 
 export function FooterForm() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [showMore, setShowMore] = useState(false);
   const [firstName, setFirstName] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -1291,7 +1373,7 @@ export function FooterForm() {
                   {i < NEXT_STEPS.length - 1 && (
                     <span
                       aria-hidden="true"
-                      className="absolute left-[13.5px] top-8 -bottom-6 w-px bg-white/12"
+                      className="absolute left-[13.5px] top-8 -bottom-6 w-px bg-white/[0.12]"
                     />
                   )}
                   <span className="relative z-10 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/15 text-sm font-semibold text-[#eb6a18] ring-1 ring-[#eb6a18]/30">
@@ -1306,7 +1388,7 @@ export function FooterForm() {
             </ol>
 
             {/* Safety card — only honest proof: the real Yelp badge + the true 30-day guarantee */}
-            <div className="mt-9 rounded-2xl border border-white/12 bg-white/[0.05] p-5">
+            <div className="mt-9 rounded-2xl border border-white/[0.12] bg-white/[0.05] p-5">
               <div className="flex items-start gap-3">
                 <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#9be7ad]" strokeWidth={2} />
                 <div>
@@ -1319,8 +1401,12 @@ export function FooterForm() {
               <hr className="my-4 border-white/10" />
               <img
                 src="/images/yelp-400-families.png"
+                width={270}
+                height={120}
+                loading="lazy"
+                decoding="async"
                 alt="Rated a 5-star business on Yelp by 400+ families"
-                className="w-44 rounded-md"
+                className="w-44 h-auto rounded-md"
               />
               <p className="mt-2 text-xs text-white/45">Rated 5 stars by 400+ families on Yelp.</p>
             </div>
@@ -1363,20 +1449,21 @@ export function FooterForm() {
                   </p>
                 </div>
               ) : (
-                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                  <div className="flex items-baseline justify-between gap-3">
+                <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit}>
+                  <div className="flex items-baseline justify-between gap-3 sm:col-span-2">
                     <p className="font-display-serif italic text-lg text-white/90">
                       Tell us where to reach you
                     </p>
                     <span className="flex-shrink-0 text-[11px] uppercase tracking-[0.1em] text-white/45">
-                      3 quick details
+                      Takes under a minute
                     </span>
                   </div>
 
-                  <FloatingField label="First name" name="parent_first_name" required autoComplete="given-name" showValid />
-                  <FloatingField label="Email address" name="email" type="email" required inputMode="email" autoComplete="email" showValid />
+                  <FloatingField label="Parent First Name" name="parent_first_name" required autoComplete="given-name" showValid />
+                  <FloatingField label="Parent Last Name" name="parent_last_name" required autoComplete="family-name" showValid />
+                  <FloatingField label="Email Address" name="email" type="email" required inputMode="email" autoComplete="email" showValid className="sm:col-span-2" />
                   <FloatingField
-                    label="Phone number"
+                    label="Phone Number"
                     name="phone"
                     type="tel"
                     required
@@ -1384,57 +1471,44 @@ export function FooterForm() {
                     autoComplete="tel"
                     showValid
                     helper="So we can reach you to schedule — we never share it."
+                    className="sm:col-span-2"
                   />
-
-                  <button
-                    type="button"
-                    aria-expanded={showMore}
-                    aria-controls="more-fields"
-                    onClick={() => setShowMore((v) => !v)}
-                    className="flex items-center gap-1.5 self-start text-sm text-white/55 transition-colors hover:text-white/80"
-                  >
-                    <ChevronDown className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`} />
-                    {showMore ? 'Hide optional details' : 'Add a few optional details'}
-                  </button>
-
-                  <div id="more-fields" className={`flex-col gap-4 ${showMore ? 'flex' : 'hidden'}`}>
-                    <FloatingField label="Last name" name="parent_last_name" autoComplete="family-name" />
-                    <FloatingField label="Child / children name(s)" name="child_names" autoComplete="off" />
-                    <div className="relative">
-                      <select
-                        name="referral_source"
-                        aria-label="Where did you hear about us"
-                        defaultValue=""
-                        className="w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] px-4 py-4 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
-                      >
-                        <option value="" disabled className="text-gray-900">
-                          – Where did you hear about us? (optional) –
-                        </option>
-                        <option className="text-gray-900">Friend/Family</option>
-                        <option className="text-gray-900">School Flyer</option>
-                        <option className="text-gray-900">Yelp</option>
-                        <option className="text-gray-900">Google</option>
-                        <option className="text-gray-900">Other</option>
-                      </select>
-                      <ChevronDown
-                        size={18}
-                        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40"
-                      />
-                    </div>
+                  <FloatingField label="Child/Children Name(s)" name="child_names" required autoComplete="off" showValid className="sm:col-span-2" />
+                  <div className="relative sm:col-span-2">
+                    <select
+                      name="referral_source"
+                      aria-label="Where did you hear about us"
+                      required
+                      defaultValue=""
+                      className="w-full appearance-none rounded-lg border border-white/15 bg-white/[0.06] px-4 py-4 text-base text-white transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25"
+                    >
+                      <option value="" disabled className="text-gray-900">
+                        – Where did you hear about us? –
+                      </option>
+                      <option className="text-gray-900">Friend/Family</option>
+                      <option className="text-gray-900">School Flyer</option>
+                      <option className="text-gray-900">Yelp</option>
+                      <option className="text-gray-900">Google</option>
+                      <option className="text-gray-900">Other</option>
+                    </select>
+                    <ChevronDown
+                      size={18}
+                      className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40"
+                    />
                   </div>
 
                   {status === 'error' && (
                     <p
                       role="status"
                       aria-live="polite"
-                      className="flex items-start gap-2 rounded-lg border border-[#ffb4a8]/30 bg-[#b9314f]/15 px-3 py-2 text-sm text-[#ffd2ca]"
+                      className="flex items-start gap-2 rounded-lg border border-[#ffb4a8]/30 bg-[#b9314f]/15 px-3 py-2 text-sm text-[#ffd2ca] sm:col-span-2"
                     >
                       <X className="mt-0.5 h-4 w-4 flex-shrink-0" />
                       Something went wrong sending your details — please try again. Your details weren’t lost.
                     </p>
                   )}
 
-                  <CtaButton type="submit" disabled={status === 'submitting'} fullWidth className="mt-1">
+                  <CtaButton type="submit" disabled={status === 'submitting'} fullWidth className="mt-1 sm:col-span-2">
                     {status === 'submitting' ? (
                       <>
                         <Loader2 size={18} className="animate-spin" />
@@ -1445,7 +1519,7 @@ export function FooterForm() {
                     )}
                   </CtaButton>
 
-                  <div className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3">
+                  <div className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 sm:col-span-2">
                     <ShieldCheck className="h-5 w-5 flex-shrink-0 text-[#9be7ad]" strokeWidth={2} />
                     <p className="text-[13px] text-white/70">
                       Backed by our 30-day money-back guarantee.{' '}
