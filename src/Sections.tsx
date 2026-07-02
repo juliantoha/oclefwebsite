@@ -714,7 +714,7 @@ export function VideoTestimonials() {
             <button
               key={s.name}
               onClick={() => setActive(s)}
-              className="group isolate relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#eb6a18] focus-visible:ring-offset-2"
+              className="group isolate relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-sm transform-gpu transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#eb6a18] focus-visible:ring-offset-2"
             >
               {/* Media: a real video plays muted/looping inline as a silent preview;
                   tapping the card opens the lightbox to enlarge it with sound. Falls
@@ -1076,7 +1076,7 @@ const LOCATIONS = [
   { region: 'California', name: 'Oclef Los Gatos', addr: '15466 Los Gatos Blvd., Los Gatos, CA 95032', phone: '(408) 915-5524' },
   { region: 'California', name: 'Oclef Pleasanton', addr: '1807 Santa Rita Rd, Pleasanton, CA 94566', phone: '(925) 218-0054' },
   { region: 'California', name: 'Oclef Cupertino', addr: '20660 Stevens Creek Blvd, Cupertino, CA 95014', phone: '(408) 915-5524' },
-  { region: 'California', name: 'Morgan Hill', addr: '305 Vineyard Town Ctr Wy, Morgan Hill, CA 95037', phone: '(408) 915-5524' },
+  { region: 'California', name: 'Oclef Fremont', addr: '47000 Warm Springs Blvd, Fremont, CA 94539', phone: '(408) 915-5524' },
   { region: 'California', name: 'Oclef Los Altos & Mountain View', addr: '655 Castro Street, Mountain View, CA 94041', phone: '(408) 915-5524' },
   { region: 'Virginia', name: 'Oclef Loudoun', addr: '42395 Ryan Rd, Brambleton, VA 20148', phone: '(925) 218-0054' },
   { region: 'Washington', name: 'Oclef Bellevue', addr: '1645 140th N.E., Bellevue, WA 98005', phone: '(425) 209-0608' },
@@ -1316,9 +1316,9 @@ function FloatingField({
 const FORM_ENDPOINT = 'https://formspree.io/f/xykaorvo';
 
 const NEXT_STEPS = [
-  { n: '1', title: 'You book in under a minute', sub: 'A few quick details — that’s it.' },
-  { n: '2', title: 'We reach out within one business day', sub: 'A real person from Oclef, by phone or email — your choice.' },
-  { n: '3', title: 'Your child’s free 30-minute assessment', sub: 'An honest read on their level, plus a daily-practice plan.' },
+  { n: '1', title: 'Book your free consultation', sub: 'A few quick details. Takes under a minute.' },
+  { n: '2', title: 'Meet & get a custom plan', sub: 'We reach out within one business day, assess your child’s level, and design a learning path built around them.' },
+  { n: '3', title: 'Start daily lessons', sub: '1-on-1 lessons five days a week, backed by our 30-day guarantee.' },
 ];
 
 export function FooterForm() {
@@ -1360,10 +1360,6 @@ export function FooterForm() {
               <span className="font-lato font-bold tracking-[-0.03em]">Book your free</span>{' '}
               <span className="font-display-serif italic text-[#eb6a18]">consultation</span>
             </h2>
-            <p className="mt-5 text-white/70 leading-relaxed">
-              A relaxed 1-on-1 call — no pressure, no commitment.
-            </p>
-
             <h3 className="mt-9 text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
               What happens next
             </h3>
@@ -1376,7 +1372,7 @@ export function FooterForm() {
                       className="absolute left-[13.5px] top-8 -bottom-6 w-px bg-white/[0.12]"
                     />
                   )}
-                  <span className="relative z-10 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/15 text-sm font-semibold text-[#eb6a18] ring-1 ring-[#eb6a18]/30">
+                  <span className="relative z-10 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18] text-sm font-semibold text-white ring-4 ring-[#eb6a18]/15 shadow-lg shadow-[#eb6a18]/30">
                     {s.n}
                   </span>
                   <div>
@@ -1428,7 +1424,7 @@ export function FooterForm() {
                     You’re all set{firstName ? `, ${firstName}` : ''}.
                   </h3>
                   <p className="mt-3 text-white/70 leading-relaxed">
-                    Thanks — we’ve got your details. Here’s what happens now:
+                    Thanks, we’ve got your details. Here’s what happens now:
                   </p>
                   <ol className="mt-6 flex flex-col gap-4">
                     {[
@@ -1437,7 +1433,7 @@ export function FooterForm() {
                       'Your child’s free 30-minute assessment',
                     ].map((t, i) => (
                       <li key={i} className="flex items-center gap-3">
-                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18]/15 text-sm font-semibold text-[#eb6a18] ring-1 ring-[#eb6a18]/30">
+                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18] text-sm font-semibold text-white ring-4 ring-[#eb6a18]/15 shadow-lg shadow-[#eb6a18]/30">
                           {i + 1}
                         </span>
                         <span className="text-[15px] text-white/85">{t}</span>
@@ -1470,7 +1466,7 @@ export function FooterForm() {
                     inputMode="tel"
                     autoComplete="tel"
                     showValid
-                    helper="So we can reach you to schedule — we never share it."
+                    helper="So we can reach you to schedule. We never share it."
                     className="sm:col-span-2"
                   />
                   <FloatingField label="Child/Children Name(s)" name="child_names" required autoComplete="off" showValid className="sm:col-span-2" />
@@ -1504,7 +1500,7 @@ export function FooterForm() {
                       className="flex items-start gap-2 rounded-lg border border-[#ffb4a8]/30 bg-[#b9314f]/15 px-3 py-2 text-sm text-[#ffd2ca] sm:col-span-2"
                     >
                       <X className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                      Something went wrong sending your details — please try again. Your details weren’t lost.
+                      Something went wrong sending your details. Please try again, your details weren’t lost.
                     </p>
                   )}
 
@@ -1536,7 +1532,7 @@ export function FooterForm() {
           <div className="flex items-center gap-2.5">
             <img src="/images/oclef-logo-white.png" alt="Oclef" className="h-6 w-auto" />
             <span className="text-xl font-lato">Oclef</span>
-            <span className="font-display-serif italic text-sm text-white/55">Piano, every day.</span>
+            <span className="font-display-serif italic text-sm text-white/55">Piano Every Day</span>
           </div>
           <p className="text-white/45 text-xs">
             Copyright © 2026 Oclef. All Rights Reserved.
