@@ -12,7 +12,6 @@ import {
   X,
   ChevronDown,
   ArrowRight,
-  Minus,
   Phone,
   MapPin,
   Sparkles,
@@ -464,6 +463,8 @@ const PRO_FEATURES = [
     body: 'With Oclef Pro, you’ll see the journey unfold, with daily notes, feedback, recordings, and quizzes, all in one place. It’s more than a record of progress; it’s a reflection of growth, day by day.',
     tag: 'Stay in tune with every moment.',
     image: '/images/pro-activity-feed.jpg',
+    w: 1600,
+    h: 601,
   },
   {
     icon: Music4,
@@ -472,6 +473,8 @@ const PRO_FEATURES = [
     body: 'From personalized feedback to instant access to sheet music, Oclef Pro makes every assignment meaningful. Your child will know not just what to practice, but why, transforming effort into artistry.',
     tag: 'Because every great performance starts with the right preparation.',
     image: '/images/pro-assignments.jpg',
+    w: 1600,
+    h: 708,
   },
   {
     icon: Sparkles,
@@ -480,6 +483,8 @@ const PRO_FEATURES = [
     body: 'Interactive quizzes take students from “Do-Re-Mi” to decoding a Beethoven symphony or improvising a jazz riff. Oclef Pro makes theory engaging, step by step.',
     tag: 'Foundations that make the complex feel simple.',
     image: '/images/pro-music-theory.jpg',
+    w: 1600,
+    h: 673,
   },
   {
     icon: Trophy,
@@ -488,6 +493,8 @@ const PRO_FEATURES = [
     body: 'Every recital, every recording, preserved forever. Whether it’s Chopin or Coldplay, your child’s milestones are captured, so you can relive the moments that matter most.',
     tag: 'Celebrate their evolution, one performance at a time.',
     image: '/images/pro-performances-recitals.jpg',
+    w: 1600,
+    h: 747,
   },
   {
     icon: LineChart,
@@ -496,6 +503,8 @@ const PRO_FEATURES = [
     body: 'Monthly progress reports from their professor, delivered through Oclef Pro, keep parents informed and engaged. It’s clear, actionable feedback that reflects not just how they’re growing, but where they’re headed.',
     tag: 'Designed to keep parents, students, and professors in sync.',
     image: '/images/pro-monthly-assessments.jpg',
+    w: 1600,
+    h: 711,
   },
 ];
 
@@ -523,60 +532,81 @@ export function OclefPro() {
             return (
               <div
                 key={f.name}
-                className={`rounded-xl border bg-white overflow-hidden transition-colors ${
-                  isOpen ? 'border-[#eb6a18]/40' : 'border-gray-200'
+                className={`overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${
+                  isOpen
+                    ? 'border-[#eb6a18]/40 shadow-xl shadow-gray-900/[0.06]'
+                    : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <button
                   onClick={() => setOpen(isOpen ? -1 : i)}
-                  className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
                 >
-                  <span className="flex items-center gap-3">
-                    <f.icon
-                      size={20}
-                      className={isOpen ? 'text-[#eb6a18]' : 'text-gray-400'}
-                      strokeWidth={1.75}
-                    />
+                  <span className="flex items-center gap-4">
                     <span
-                      className={`text-lg font-semibold ${isOpen ? 'text-[#eb6a18]' : 'text-gray-900'}`}
+                      className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg transition-colors duration-300 ${
+                        isOpen ? 'bg-[#eb6a18]/10' : 'bg-gray-100'
+                      }`}
+                    >
+                      <f.icon
+                        size={20}
+                        className={`transition-colors duration-300 ${isOpen ? 'text-[#eb6a18]' : 'text-gray-500'}`}
+                        strokeWidth={1.75}
+                      />
+                    </span>
+                    <span
+                      className={`text-lg font-semibold transition-colors duration-300 ${
+                        isOpen ? 'text-[#eb6a18]' : 'text-gray-900'
+                      }`}
                     >
                       {f.name}
                     </span>
                   </span>
-                  {isOpen ? (
-                    <Minus size={20} className="text-[#eb6a18] shrink-0" />
-                  ) : (
-                    <ChevronDown size={20} className="text-gray-400 shrink-0" />
-                  )}
+                  <ChevronDown
+                    size={20}
+                    className={`flex-shrink-0 transition-transform duration-300 ${
+                      isOpen ? 'rotate-180 text-[#eb6a18]' : 'text-gray-400'
+                    }`}
+                  />
                 </button>
 
-                {isOpen && (
-                  <div className="px-6 pb-7">
-                    <h3 className="text-gray-900 text-xl font-semibold leading-tight">
-                      {f.headline}
-                    </h3>
-                    <p className="mt-3 max-w-3xl text-gray-600 text-[15px] leading-relaxed">{f.body}</p>
-                    <p className="mt-3 text-gray-900 font-display-serif italic">{f.tag}</p>
+                {/* grid-rows 0fr→1fr animates height smoothly; content stays mounted */}
+                <div
+                  className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                    isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div
+                      className={`px-5 pb-7 transition-opacity duration-300 sm:px-6 ${
+                        isOpen ? 'opacity-100 delay-100' : 'opacity-0'
+                      }`}
+                    >
+                      <h3 className="text-gray-900 text-xl font-semibold leading-tight">{f.headline}</h3>
+                      <p className="mt-3 max-w-3xl text-gray-600 text-[15px] leading-relaxed">{f.body}</p>
+                      <p className="mt-3 text-gray-900 font-display-serif italic">{f.tag}</p>
 
-                    {/* Software screenshot — full width so the UI is legible */}
-                    <div className="mt-6 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                      <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-gray-100">
-                        <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
-                        <span className="ml-2 text-[11px] text-gray-400 font-medium">
-                          Oclef Pro · {f.name}
-                        </span>
+                      {/* Screenshot — width/height reserve the exact aspect so it never shifts on load */}
+                      <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                        <div className="flex items-center gap-1.5 border-b border-gray-100 px-4 py-2.5">
+                          <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+                          <span className="ml-2 text-[11px] font-medium text-gray-400">Oclef Pro · {f.name}</span>
+                        </div>
+                        <img
+                          src={f.image}
+                          width={f.w}
+                          height={f.h}
+                          alt={`Oclef Pro ${f.name} screenshot`}
+                          loading="lazy"
+                          className="block h-auto w-full bg-[#fafafa]"
+                        />
                       </div>
-                      <img
-                        src={f.image}
-                        alt={`Oclef Pro ${f.name} screenshot`}
-                        loading="lazy"
-                        className="block w-full h-auto bg-[#fafafa]"
-                      />
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
