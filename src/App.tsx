@@ -162,8 +162,11 @@ export default function App() {
           </span>
         </div>
 
+        {/* w-max exempts the abspos pill from shrink-to-fit (it clamps to half the
+            viewport otherwise and the labels wrap); xl instead of lg so the full
+            pill never collides with the Book a Free Call button. */}
         <div
-          className={`hidden lg:flex absolute left-1/2 -translate-x-1/2 backdrop-blur-md border rounded-full px-2 py-2 items-center gap-1 transition-colors duration-300 ${
+          className={`hidden xl:flex w-max absolute left-1/2 -translate-x-1/2 backdrop-blur-md border rounded-full px-2 py-2 items-center gap-1 transition-colors duration-300 ${
             navDark ? 'bg-gray-900/5 border-gray-900/10' : 'bg-white/20 border-white/30'
           }`}
         >
@@ -220,7 +223,7 @@ export default function App() {
               {/* "Make" dissolves into "Piano" as the scroll reveals the warm scene,
                   completing the slogan: Make Every Day → Piano Every Day. */}
               <span
-                className="grid justify-items-center font-display-serif italic font-normal text-5xl sm:text-7xl md:text-8xl"
+                className="grid justify-items-center font-display-serif italic text-5xl sm:text-7xl md:text-8xl"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 <span

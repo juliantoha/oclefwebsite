@@ -193,7 +193,7 @@ export function WhyOclef() {
         <SectionLabel>Why Oclef?</SectionLabel>
         <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl md:text-6xl leading-[0.95]">
           <span className="font-display-serif italic">Piano</span>{' '}
-          <span className="font-lato font-bold">Every Day</span>
+          <span className="font-lato font-bold tracking-[-0.03em]">Every Day</span>
         </h2>
       </div>
 
@@ -1110,7 +1110,7 @@ export function Locations() {
                 <MapPin size={20} className="hidden text-[#eb6a18] sm:block" strokeWidth={1.75} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-[#eb6a18]/80">
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-[#cf5d12]">
                   {loc.region}
                 </p>
                 <h3 className="mt-0.5 text-base font-semibold text-gray-900 leading-snug">{loc.name}</h3>
@@ -1150,6 +1150,8 @@ const TEACHERS: Teacher[] = [
   { name: 'Ms. Yuliya', title: 'Piano Professor', initial: 'Y', gradient: 'linear-gradient(155deg, #166a82 0%, #013048 100%)' },
   { name: 'Mr. Connor', title: 'Piano Professor', initial: 'C', gradient: 'linear-gradient(155deg, #0e5170 0%, #00263f 100%)' },
   { name: 'Dr. Lucy', title: 'Piano Professor', initial: 'L', gradient: 'linear-gradient(155deg, #1c6379 0%, #02222e 100%)' },
+  { name: 'Mrs. Nancy', title: 'Piano Professor', initial: 'N', gradient: 'linear-gradient(155deg, #12586e 0%, #012536 100%)' },
+  { name: 'Ms. Kinga', title: 'Piano Professor', initial: 'K', gradient: 'linear-gradient(155deg, #17657f 0%, #022b3d 100%)' },
 ];
 
 export function MeetTheTeachers() {
@@ -1168,7 +1170,7 @@ export function MeetTheTeachers() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-5 sm:gap-6">
           {TEACHERS.map((t) => (
             <div key={t.name} className="text-center">
               <MonogramTile
@@ -1386,7 +1388,7 @@ export function FooterForm() {
             {/* Safety card — only honest proof: the real Yelp badge + the true 30-day guarantee */}
             <div className="mt-9 rounded-2xl border border-white/[0.12] bg-white/[0.05] p-5">
               <div className="flex items-start gap-3">
-                <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#9be7ad]" strokeWidth={2} />
+                <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#eb6a18]" strokeWidth={2} />
                 <div>
                   <p className="font-semibold text-white">30-day money-back guarantee</p>
                   <p className="mt-0.5 text-[13px] text-white/55">
@@ -1516,7 +1518,7 @@ export function FooterForm() {
                   </CtaButton>
 
                   <div className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 sm:col-span-2">
-                    <ShieldCheck className="h-5 w-5 flex-shrink-0 text-[#9be7ad]" strokeWidth={2} />
+                    <ShieldCheck className="h-5 w-5 flex-shrink-0 text-[#eb6a18]" strokeWidth={2} />
                     <p className="text-[13px] text-white/70">
                       Backed by our 30-day money-back guarantee.{' '}
                       <span className="text-white/45">No commitment · we never share your details.</span>

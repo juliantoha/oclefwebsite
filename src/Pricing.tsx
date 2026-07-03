@@ -161,7 +161,7 @@ function PricingCard({ plan }: { plan: Plan }) {
             </span>
             {plan.suffix && <span className="text-lg text-white/70">{plan.suffix}</span>}
           </div>
-          <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#eb6a18]/80">
+          <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
             Billed monthly · no contract
           </div>
         </FadeUp>

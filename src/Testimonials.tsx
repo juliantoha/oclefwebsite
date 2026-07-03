@@ -127,11 +127,20 @@ function Testimonial({
         className="relative mx-auto max-w-2xl transition-all duration-500 ease-out"
         style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)' }}
       >
-        {/* Oversized ghosted quotation glyph — a pure tint of the text color */}
+        {/* Oversized ghosted quotation glyph — a pure tint of the text color. It IS
+            the quote mark (the quote strings carry none), sized at exactly 4x the
+            quote's own fluid size and offset in em so the glyph-to-first-line
+            relationship holds at every viewport width. */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute -left-1 -top-10 z-0 select-none font-display-serif italic leading-[0.7] sm:-left-3 sm:-top-14"
-          style={{ fontSize: 'clamp(6rem, 14vw, 11rem)', color: fg, opacity: theme === 'dark' ? 0.12 : 0.09 }}
+          className="pointer-events-none absolute z-0 select-none font-display-serif italic leading-[0.7]"
+          style={{
+            fontSize: 'calc(4 * clamp(1.5rem, 4.5vw, 2.75rem))',
+            top: '-0.1em',
+            left: '-0.06em',
+            color: fg,
+            opacity: theme === 'dark' ? 0.12 : 0.09,
+          }}
         >
           “
         </span>
@@ -171,8 +180,8 @@ const NAVY = 'radial-gradient(120% 90% at 18% -10%, #0a5a7d 0%, #004a69 42%, #00
 export function TiffanyTestimonial() {
   return (
     <Testimonial gradient={PEACH} fg="#004a69" sub="#9a8a78" theme="light" author="Tiffany Q.">
-      “Oclef’s daily lessons have given my daughter a sense of belonging and{' '}
-      <Annotate type="underline" delay={450}>confidence</Annotate>.”
+      Oclef’s daily lessons have given my daughter a sense of belonging and{' '}
+      <Annotate type="underline" delay={450}>confidence</Annotate>.
     </Testimonial>
   );
 }
@@ -180,9 +189,9 @@ export function TiffanyTestimonial() {
 export function NgaTestimonial() {
   return (
     <Testimonial gradient={BLUE} fg="#004a69" sub="#4a6b7a" theme="light" author="Nga C.">
-      “Oclef has transformed my son’s{' '}
+      Oclef has transformed my son’s{' '}
       <Annotate type="underline" delay={450}>love for music</Annotate>, making it a cherished part of his
-      daily routine.”
+      daily routine.
     </Testimonial>
   );
 }
@@ -190,8 +199,8 @@ export function NgaTestimonial() {
 export function JiTestimonial() {
   return (
     <Testimonial gradient={NAVY} fg="#ffffff" sub="rgba(255,255,255,0.55)" theme="dark" author="Ji W.">
-      “The daily feedback from Oclef has made a significant difference in my child’s progress and{' '}
-      <Annotate type="circle" strokeWidth={2} delay={450}>enjoyment</Annotate> of music.”
+      The daily feedback from Oclef has made a significant difference in my child’s progress and{' '}
+      <Annotate type="circle" strokeWidth={2} delay={450}>enjoyment</Annotate> of music.
     </Testimonial>
   );
 }
