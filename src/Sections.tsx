@@ -230,10 +230,9 @@ export function WhyOclef() {
           painful result of the piano student eventually dropping out or being illiterate.
         </p>
         <p>
-          Our goal at Oclef is clear: to empower every student to grow and thrive through the
-          joy of learning music. Join us to provide your child with daily 1-on-1 classes by a
-          teacher that makes their learning experience into a journey of enjoyment and
-          personal growth.
+          Oclef was built to fix that. Your child is never alone at the piano. A teacher is
+          with them 1-on-1 five days a week, guiding each practice session and correcting
+          mistakes while they’re still small. That is what Piano Every Day means.
         </p>
       </div>
 
@@ -253,7 +252,7 @@ const STEPS: {
   {
     icon: CalendarDays,
     title: 'Daily 1-on-1 Lessons',
-    body: 'Your child connects with their piano teacher 5 times a week, 1:1 online. Whether they’re pure beginners or building upon years of study, our professors adjust to each student.',
+    body: 'Your child connects with their piano teacher 5 times a week, 1:1 online. Lessons start at 15 minutes and grow with your child. Whether they’re pure beginners or building upon years of study, our professors adjust to each student.',
   },
   {
     icon: Users,
@@ -273,7 +272,7 @@ export function HowItWorks() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto">
           <SectionLabel>How it works</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">Three parts,</span>{' '}
             <span className="font-display-serif italic">one complete education</span>
           </h2>
@@ -356,13 +355,14 @@ export function Comparison() {
   return (
     <section
       id="comparison"
-      className="scroll-mt-20 py-20 sm:py-28 px-5"
+      className="scroll-mt-20 relative py-20 sm:py-28 px-5"
       style={{ background: 'radial-gradient(120% 90% at 50% 0%, #004a69 0%, #002642 55%, #02040f 100%)' }}
     >
-      <div className="max-w-5xl mx-auto">
+      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="relative max-w-5xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <SectionLabel>The difference</SectionLabel>
-          <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">See how Oclef</span>{' '}
             <span className="font-display-serif italic text-[#eb6a18]">compares</span>
           </h2>
@@ -513,7 +513,7 @@ const PRO_FEATURES = [
     icon: Activity,
     name: 'Activity Feed',
     headline: 'Every day, a step forward.',
-    body: 'With Oclef Pro, you’ll see the journey unfold, with daily notes, feedback, recordings, and quizzes, all in one place. It’s more than a record of progress; it’s a reflection of growth, day by day.',
+    body: 'With Oclef Pro, you’ll see the journey unfold, with daily notes, feedback, recordings, and quizzes, all in one place. You don’t need to play piano yourself to follow along. Open the feed and you know exactly how today went.',
     tag: 'Stay in tune with every moment.',
     image: '/images/pro-activity-feed.jpg',
     w: 1600,
@@ -523,7 +523,7 @@ const PRO_FEATURES = [
     icon: Music4,
     name: 'Assignments',
     headline: 'Practice with purpose.',
-    body: 'From personalized feedback to instant access to sheet music, Oclef Pro makes every assignment meaningful. Your child will know not just what to practice, but why, transforming effort into artistry.',
+    body: 'From personalized feedback to instant access to sheet music, Oclef Pro makes every assignment meaningful. Your child will know not just what to practice, but why.',
     tag: 'Because every great performance starts with the right preparation.',
     image: '/images/pro-assignments.jpg',
     w: 1600,
@@ -532,7 +532,7 @@ const PRO_FEATURES = [
   {
     icon: Sparkles,
     name: 'Music Theory',
-    headline: 'The building blocks of brilliance.',
+    headline: 'Theory that feels like a game, not a chore.',
     body: 'Interactive quizzes take students from “Do-Re-Mi” to decoding a Beethoven symphony or improvising a jazz riff. Oclef Pro makes theory engaging, step by step.',
     tag: 'Foundations that make the complex feel simple.',
     image: '/images/pro-music-theory.jpg',
@@ -542,7 +542,7 @@ const PRO_FEATURES = [
   {
     icon: Trophy,
     name: 'Performances & Recitals',
-    headline: 'A gallery of greatness.',
+    headline: 'Watch how far they’ve come.',
     body: 'Every recital, every recording, preserved forever. Whether it’s Chopin or Coldplay, your child’s milestones are captured, so you can relive the moments that matter most.',
     tag: 'Celebrate their evolution, one performance at a time.',
     image: '/images/pro-performances-recitals.jpg',
@@ -552,7 +552,7 @@ const PRO_FEATURES = [
   {
     icon: LineChart,
     name: 'Monthly Assessments',
-    headline: 'Insights that connect.',
+    headline: 'A real report card, every month.',
     body: 'Monthly progress reports from their professor, delivered through Oclef Pro, keep parents informed and engaged. It’s clear, actionable feedback that reflects not just how they’re growing, but where they’re headed.',
     tag: 'Designed to keep parents, students, and professors in sync.',
     image: '/images/pro-monthly-assessments.jpg',
@@ -568,7 +568,7 @@ export function OclefPro() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12 sm:mb-16">
           <SectionLabel>Oclef Pro</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">Unlocking potential,</span>{' '}
             <span className="font-display-serif italic">one note at a time</span>
           </h2>
@@ -713,13 +713,13 @@ export function VideoTestimonials() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <SectionLabel>Family stories</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">Real families.</span>{' '}
             <span className="font-display-serif italic text-[#eb6a18]">Real stories.</span>
           </h2>
           <p className="mt-5 text-gray-600 leading-relaxed">
-            Parents and their kids share how Oclef changed their experience with piano, from
-            daily practice to real progress, community, and what comes next.
+            Parents and their kids share how Oclef changed their experience with piano. We are
+            filming their stories now, and the first films land here soon.
           </p>
         </div>
 
@@ -752,12 +752,19 @@ export function VideoTestimonials() {
               {/* Legibility scrim */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/5" />
 
-              {/* Play button */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full border border-white/40 bg-black/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                  <Play size={20} className="ml-0.5 text-white" fill="white" />
+              {/* Media gate: the play affordance only renders when real footage
+                  exists; until then the card is honest about what it is. */}
+              {s.video ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full border border-white/40 bg-black/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                    <Play size={20} className="ml-0.5 text-white" fill="white" />
+                  </span>
+                </div>
+              ) : (
+                <span className="absolute top-3 left-3 rounded-full bg-black/35 px-2.5 py-1 text-[11px] font-medium text-white/90 backdrop-blur">
+                  Film coming soon
                 </span>
-              </div>
+              )}
 
               {/* Caption */}
               <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
@@ -923,55 +930,59 @@ export function StatsStrip() {
   );
 }
 
-/* ─────────────────────────  Getting started (3 steps)  ───────────────────────── */
+/* ─────────────────────────  Your first 30 days  ───────────────────────── */
+/* Answers the post-price question ("what if it doesn't work?") as a story; the
+   footer's "What happens next" rail owns booking mechanics and the 1-2-3 badges. */
 const START_STEPS = [
   {
-    n: '1',
-    title: 'Book a free consultation',
-    body: 'A 30-minute conversation about your child, your goals, and whether the daily model is right for them. No commitment.',
+    when: 'Week 1',
+    title: 'Meet their teacher',
+    body: 'Five 1-on-1 lessons in the first week. Your child’s teacher learns how they think, what excites them, and where they get stuck.',
   },
   {
-    n: '2',
-    title: 'Meet & get a custom plan',
-    body: 'We assess your child’s level and design a learning path built entirely around them.',
+    when: 'Weeks 2-3',
+    title: 'The habit forms',
+    body: 'Sitting down at the piano becomes part of the day. You follow along in Oclef Pro with daily notes, recordings, and feedback.',
   },
   {
-    n: '3',
-    title: 'Start daily lessons',
-    body: 'Your child begins 1-on-1 lessons five days a week from home, backed by our 30-day guarantee.',
+    when: 'Day 30',
+    title: 'You decide',
+    body: 'If daily lessons are not right for your family, tell us and we will refund every dollar. If they are, your child is one month into a habit that lasts.',
   },
 ];
 
 export function GetStarted() {
   return (
-    <section className="px-5 py-20 sm:py-28" style={{ background: NAVY }}>
-      <div className="max-w-5xl mx-auto">
+    <section className="relative px-5 py-20 sm:py-28" style={{ background: NAVY }}>
+      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="relative max-w-5xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <SectionLabel>Getting started</SectionLabel>
-          <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
-            <span className="font-lato font-bold tracking-[-0.03em]">Starting is</span>{' '}
-            <span className="font-display-serif italic text-[#eb6a18]">simple</span>
+          <SectionLabel>Your first 30 days</SectionLabel>
+          <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-[1.1]">
+            <span className="font-lato font-bold tracking-[-0.03em]">What your first month</span>{' '}
+            <span className="font-display-serif italic text-[#eb6a18]">looks like</span>
           </h2>
           <p className="mt-5 text-white/70 leading-relaxed">
-            Three easy steps, and the first one is completely free.
+            It starts with a free consultation, and the whole first month is covered by our
+            money-back guarantee.
           </p>
         </div>
 
         <div className="relative grid md:grid-cols-3 gap-12 md:gap-10">
-          {/* Connecting line behind the step badges (desktop) */}
+          {/* Connecting line behind the time pills (desktop) */}
           <div
-            className="hidden md:block absolute top-7 left-[16.667%] right-[16.667%] h-px z-0"
+            className="hidden md:block absolute top-[15px] left-[16.667%] right-[16.667%] h-px z-0"
             style={{
               background:
                 'linear-gradient(90deg, rgba(235,106,24,0.5) 0%, rgba(255,255,255,0.18) 50%, rgba(235,106,24,0.5) 100%)',
             }}
           />
           {START_STEPS.map((s) => (
-            <div key={s.n} className="relative text-center">
-              <div className="relative z-10 mx-auto w-14 h-14 rounded-full bg-[#eb6a18] text-white font-semibold text-lg flex items-center justify-center ring-4 ring-[#eb6a18]/15 shadow-lg shadow-[#eb6a18]/30">
-                {s.n}
-              </div>
-              <h3 className="mt-6 text-white text-xl font-semibold">{s.title}</h3>
+            <div key={s.when} className="relative text-center">
+              <span className="relative z-10 inline-flex items-center rounded-full border border-[#eb6a18]/40 bg-[#eb6a18]/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#eb6a18]">
+                {s.when}
+              </span>
+              <h3 className="mt-5 text-white text-xl font-semibold">{s.title}</h3>
               <p className="mt-2 text-white/65 text-[15px] leading-relaxed max-w-[280px] mx-auto">
                 {s.body}
               </p>
@@ -991,11 +1002,15 @@ export function GetStarted() {
 const FAQS = [
   {
     q: 'Do I need to buy a piano or digital keyboard for my child to learn at Oclef?',
-    a: 'Yes, having a piano or digital keyboard is essential for daily practice and making the most of Oclef lessons.',
+    a: 'Yes. Daily practice needs an instrument at home. An acoustic piano is ideal, and a weighted 88-key digital keyboard works well to start. If you don’t have one yet, ask at your consultation and we’ll help you choose.',
   },
   {
     q: 'What age do you accept students to learn at your school?',
-    a: 'Oclef welcomes students from 7 years old, ideal for engaging in structured learning and making daily lessons productive.',
+    a: 'We recommend students start at 7 years old, ideal for engaging in structured learning and making daily lessons productive. Starting younger? We are open to assessing 6-year-olds to see if they are ready.',
+  },
+  {
+    q: 'How long are the daily lessons?',
+    a: 'Students start with 15-minute 1-on-1 lessons, building toward 30 minutes within the first year as focus and stamina grow. And there is no daily limit: beyond their lesson, students can join Kaizen guided practice, Performance Seminar, music theory, and more.',
   },
   {
     q: 'How does your 30-day money back guarantee work?',
@@ -1003,15 +1018,15 @@ const FAQS = [
   },
   {
     q: 'Do you provide support for National or State Piano Exams?',
-    a: 'Yes, we offer comprehensive support for various piano examinations with our daily lessons and continuous assessment model.',
+    a: 'Yes. Exam preparation fits naturally into the daily model. Your child’s teacher works the exam repertoire and theory into each day’s lesson, and monthly assessments show you exactly where they stand.',
   },
   {
     q: 'Is Oclef suitable for absolute beginners or those who’ve struggled with piano before?',
-    a: 'Absolutely! Our adaptive method suits all levels, ensuring joy and success in piano learning from absolute beginners to highly experienced students.',
+    a: 'Yes, and especially if piano hasn’t worked before. Most children who struggle with piano were never the problem; practicing alone was. Complete beginners do well here too. Lessons start at your child’s actual level and move at their pace.',
   },
   {
     q: 'What if my child can’t attend a lesson?',
-    a: 'If your child misses a lesson, they receive tailored support to continue progressing, whether through additional materials or guided practice.',
+    a: 'Life happens. With five lessons a week, one missed day doesn’t break the rhythm. Their teacher picks up right where they left off and shares practice materials so the day isn’t wasted.',
   },
   {
     q: 'Do you provide any in-person instruction or is it completely online?',
@@ -1026,7 +1041,7 @@ export function FAQ() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-14">
           <SectionLabel>FAQ</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">Frequently asked</span>{' '}
             <span className="font-display-serif italic">questions</span>
           </h2>
@@ -1107,7 +1122,7 @@ export function Locations() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
           <SectionLabel>Our community</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-3xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">Trusted by families across</span>{' '}
             <span className="font-display-serif italic">America</span>
           </h2>
@@ -1179,7 +1194,7 @@ export function MeetTheTeachers() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <SectionLabel>Our teachers</SectionLabel>
-          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-gray-900 text-4xl sm:text-5xl leading-[1.1]">
             <span className="font-lato font-bold tracking-[-0.03em]">Taught by</span>{' '}
             <span className="font-display-serif italic">world-class teachers</span>
           </h2>
@@ -1226,15 +1241,6 @@ export function MeetTheTeachers() {
 }
 
 /* ─────────────────────────  Founder note  ───────────────────────── */
-const FOUNDER_PARAS = [
-  'In my last year of touring as a concert pianist I kept hearing the same problem. “My nephew quit piano.” “My daughter fights me every time she practices.” Different cities, same quiet defeat. So I went looking for why.',
-  'What I found is a quiet epidemic almost no one names. Millions of children are failing at the piano inside their own homes, and parents draw the only conclusion the situation offers. “Piano isn’t for them.” “The teacher wasn’t a good fit.” “My child isn’t talented.” None of it is true. The child is not failing. The system is. It hands a child one lesson a week, then sends them home to practice alone for six days. Inside that design, 83% drop out or stay musically illiterate within three years.',
-  'So I stopped touring, moved to the Bay Area, and went to work inside a struggling piano school to see the problem from the floor. There I met my co-founder, Phong Le, and together we rebuilt those six days between lessons into what is now Piano Every Day. A real feedback loop in the room, catching the mistake the moment it happens and building the right habit in its place. A path shaped around the child by people who know them by name.',
-  'If your child has already quit piano or is having trouble getting to the piano every day, talk with us before you give up.',
-  'And if they are just beginning, you are lucky.',
-  'Because what your child learns here is not just piano. They learn how to focus, how to be confident, how to persist when doing something hard, how to recover, and how to begin again, tomorrow.',
-  'That is the whole promise. Piano Every Day. Skills for life.',
-];
 
 export function FounderNote() {
   return (
@@ -1248,10 +1254,50 @@ export function FounderNote() {
           </h2>
         </div>
 
+        {/* Every sentence is Julian's, verbatim; only the typography guides the eye:
+            the thesis is bolded, the two direct asks sit on an orange rule, and the
+            promise closes in the brand serif. */}
         <div className="mt-8 space-y-5 text-gray-600 text-base leading-relaxed">
-          {FOUNDER_PARAS.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
+          <p>
+            In my last year of touring as a concert pianist I kept hearing the same problem.
+            “My nephew quit piano.” “My daughter fights me every time she practices.”
+            Different cities, same quiet defeat. So I went looking for why.
+          </p>
+          <p>
+            What I found is a quiet epidemic almost no one names. Millions of children are
+            failing at the piano inside their own homes, and parents draw the only conclusion
+            the situation offers. “Piano isn’t for them.” “The teacher wasn’t a good fit.”
+            “My child isn’t talented.” None of it is true.{' '}
+            <strong className="font-semibold text-gray-900">
+              The child is not failing. The system is.
+            </strong>{' '}
+            It hands a child one lesson a week, then sends them home to practice alone for six
+            days. Inside that design, 83% drop out or stay musically illiterate within three
+            years.
+          </p>
+          <p>
+            So I stopped touring, moved to the Bay Area, and went to work inside a struggling
+            piano school to see the problem from the floor. There I met my co-founder, Phong
+            Le, and together we rebuilt those six days between lessons into what is now Piano
+            Every Day. A real feedback loop in the room, catching the mistake the moment it
+            happens and building the right habit in its place. A path shaped around the child
+            by people who know them by name.
+          </p>
+          <div className="border-l-2 border-[#eb6a18] pl-5 space-y-5">
+            <p>
+              If your child has already quit piano or is having trouble getting to the piano
+              every day, talk with us before you give up.
+            </p>
+            <p>And if they are just beginning, you are lucky.</p>
+          </div>
+          <p>
+            Because what your child learns here is not just piano. They learn how to focus,
+            how to be confident, how to persist when doing something hard, how to recover,
+            and how to begin again, tomorrow.
+          </p>
+          <p className="font-display-serif text-xl text-gray-900">
+            That is the whole promise. Piano Every Day. Skills for life.
+          </p>
         </div>
 
         {/* Signature — the founder's portrait sits organically beside his signature */}
@@ -1393,12 +1439,13 @@ export function FooterForm() {
   };
 
   return (
-    <footer style={{ background: NAVY }} className="text-white pt-20 sm:pt-28 px-5">
-      <div className="max-w-5xl mx-auto">
+    <footer style={{ background: NAVY }} className="relative text-white pt-20 sm:pt-28 px-5">
+      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="relative max-w-5xl mx-auto">
         <div id="book" className="scroll-mt-20 grid items-start gap-12 lg:grid-cols-[5fr_6fr] lg:gap-14">
           <div>
             <SectionLabel>Get started</SectionLabel>
-            <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-tight">
+            <h2 className="mt-4 text-white text-4xl sm:text-5xl leading-[1.1]">
               <span className="font-lato font-bold tracking-[-0.03em]">Book your free</span>{' '}
               <span className="font-display-serif italic text-[#eb6a18]">consultation</span>
             </h2>
