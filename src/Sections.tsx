@@ -979,7 +979,14 @@ export function GetStarted() {
           />
           {START_STEPS.map((s) => (
             <div key={s.when} className="relative text-center">
-              <span className="relative z-10 inline-flex items-center rounded-full border border-[#eb6a18]/40 bg-[#eb6a18]/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#eb6a18]">
+              <span
+                className="relative z-10 inline-flex items-center rounded-full border border-[#eb6a18]/40 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#eb6a18]"
+                style={{
+                  // Opaque fill (tint layered over solid navy) so the connecting
+                  // hairline hides behind the pill instead of running through it.
+                  background: `linear-gradient(rgba(235,106,24,0.15), rgba(235,106,24,0.15)), ${NAVY}`,
+                }}
+              >
                 {s.when}
               </span>
               <h3 className="mt-5 text-white text-xl font-semibold">{s.title}</h3>
