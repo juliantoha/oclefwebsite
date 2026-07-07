@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,600&family=Inter:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
-
+/* Fonts are loaded from index.html (preconnect + stylesheet link) so they don't
+   render-block behind the bundled CSS. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

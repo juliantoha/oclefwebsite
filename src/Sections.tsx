@@ -197,16 +197,32 @@ export function WhyOclef() {
         </h2>
       </div>
 
-      <div className="mt-12 max-w-2xl mx-auto space-y-6 text-gray-600 text-base sm:text-lg leading-relaxed">
-        <p>
-          Every parent signs up for piano lessons to help their child find joy in music.
-          Unfortunately, within the first three years, most piano students face problems
-          leading to{' '}
-          <span className="font-semibold text-gray-900">
-            83% of children dropping out
-          </span>{' '}
-          or being musically illiterate. The root cause? Taking piano lessons once-a-week.
-        </p>
+      {/* The core argument as a skimmable figure: the two numbers side by side,
+          instead of buried inside three paragraphs. */}
+      <div className="mt-12 max-w-3xl mx-auto grid sm:grid-cols-[1fr_auto_1fr] items-stretch gap-3">
+        <div className="rounded-2xl border border-gray-200/70 bg-white p-6 text-center">
+          <p className="font-lato font-light text-5xl sm:text-6xl tracking-tight text-gray-400">83%</p>
+          <p className="mt-2 text-sm text-gray-600 leading-snug">
+            of children quit or stay musically illiterate within three years of once-a-week
+            lessons
+          </p>
+        </div>
+        <ArrowRight className="self-center justify-self-center text-[#eb6a18] rotate-90 sm:rotate-0" aria-hidden="true" />
+        <div
+          className="rounded-2xl p-6 text-center"
+          style={{ background: 'linear-gradient(180deg, #0a3349 0%, #01202f 100%)' }}
+        >
+          <p className="font-lato font-light text-5xl sm:text-6xl tracking-tight text-[#eb6a18]">90%+</p>
+          <p className="mt-2 text-sm text-white/75 leading-snug">
+            success rate when a teacher guides them 1-on-1, five days a week
+          </p>
+        </div>
+      </div>
+      <p className="mt-8 text-center font-display-serif italic text-xl text-gray-900">
+        The root cause? Once-a-week lessons.
+      </p>
+
+      <div className="mt-10 max-w-2xl mx-auto space-y-6 text-gray-600 text-base sm:text-lg leading-relaxed">
         <p>
           When taking once-a-week lessons, students are left on their own to practice. Most
           parents don’t know how to help them. So most students don’t practice correctly, or
@@ -214,12 +230,10 @@ export function WhyOclef() {
           painful result of the piano student eventually dropping out or being illiterate.
         </p>
         <p>
-          By shifting to the Oclef Method, where children receive 1-on-1 guidance five days a
-          week, success rates for piano students{' '}
-          <span className="font-semibold text-gray-900">soar above 90%</span>. Our goal at
-          Oclef is clear: to empower every student to grow and thrive through the joy of
-          learning music. Join us to provide your child with daily 1-on-1 classes by a teacher
-          that makes their learning experience into a journey of enjoyment and personal growth.
+          Our goal at Oclef is clear: to empower every student to grow and thrive through the
+          joy of learning music. Join us to provide your child with daily 1-on-1 classes by a
+          teacher that makes their learning experience into a journey of enjoyment and
+          personal growth.
         </p>
       </div>
 
@@ -885,13 +899,16 @@ function CountUp({ target, prefix = '', suffix = '', duration = 1500 }: {
 export function StatsStrip() {
   return (
     <section className="bg-[#fff6ed] py-14 sm:py-16 px-5">
+      <p className="mb-8 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#cf5d12]">
+        The daily difference, in numbers
+      </p>
       <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
         {STATS.map((s, i) => (
           <div
             key={s.label}
             className={`text-center ${i !== 0 ? 'md:border-l md:border-gray-200' : ''}`}
           >
-            <div className="font-lato font-light text-4xl sm:text-5xl tracking-tight text-[#eb6a18]">
+            <div className="font-lato font-light text-4xl sm:text-5xl tracking-tight text-[#cf5d12]">
               {s.static ? (
                 s.static
               ) : (
@@ -1071,6 +1088,8 @@ export function FAQ() {
 }
 
 /* ─────────────────────────  Locations  ───────────────────────── */
+/* Mirrored as MusicSchool JSON-LD in index.html — update both when a studio
+   changes. */
 const LOCATIONS = [
   { region: 'California', name: 'Oclef Evergreen', addr: '3623 Cobbert Drive, San Jose, CA 95148', phone: '(408) 915-5524' },
   { region: 'California', name: 'Oclef Los Gatos', addr: '15466 Los Gatos Blvd., Los Gatos, CA 95032', phone: '(408) 915-5524' },
@@ -1094,7 +1113,7 @@ export function Locations() {
           </h2>
           <p className="mt-4 sm:mt-5 text-base text-gray-600 leading-relaxed">
             Daily lessons happen online, with in-person recitals, camps, and events at studios
-            across California and Washington.
+            across California, Virginia, and Washington.
           </p>
         </div>
 
@@ -1313,9 +1332,23 @@ function FloatingField({
  * Where booking submissions are sent (Formspree). Submissions POST here as
  * FormData with an Accept: application/json header, so Formspree returns JSON
  * and the form shows its inline success/error state without a page redirect.
- * Swap this URL to repoint the form at a different Formspree form or backend.
  */
 const FORM_ENDPOINT = 'https://formspree.io/f/xykaorvo';
+
+/* Lead attribution captured once at load (referrer is only meaningful then) and
+   sent with every submission so each lead email says where the parent came from. */
+const PAGE_CONTEXT = (() => {
+  const params = new URLSearchParams(window.location.search);
+  const utm = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
+    .map((k) => (params.get(k) ? `${k}=${params.get(k)}` : null))
+    .filter(Boolean)
+    .join(' ');
+  return {
+    page: window.location.href,
+    referrer: document.referrer || '(direct)',
+    utm: utm || '(none)',
+  };
+})();
 
 const NEXT_STEPS = [
   { n: '1', title: 'Book your free consultation', sub: 'A few quick details. Takes under a minute.' },
@@ -1330,25 +1363,32 @@ export function FooterForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === 'submitting') return;
-    const form = e.currentTarget;
-    setFirstName(((new FormData(form).get('parent_first_name') as string) || '').trim());
+    const fd = new FormData(e.currentTarget);
+    const first = ((fd.get('parent_first_name') as string) || '').trim();
+    const last = ((fd.get('parent_last_name') as string) || '').trim();
+    setFirstName(first);
+    fd.set('_subject', `Oclef consultation request — ${`${first} ${last}`.trim() || 'new parent'}`);
+    fd.set('page', PAGE_CONTEXT.page);
+    fd.set('referrer', PAGE_CONTEXT.referrer);
+    fd.set('utm', PAGE_CONTEXT.utm);
     setStatus('submitting');
+    // Manual AbortController (not AbortSignal.timeout) for iOS Safari < 16: a
+    // stalled cell-network request must not pin the button on "Booking…".
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
     try {
-      if (FORM_ENDPOINT) {
-        const res = await fetch(FORM_ENDPOINT, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { Accept: 'application/json' },
-        });
-        if (!res.ok) throw new Error('Request failed');
-      } else {
-        // No endpoint wired yet — simulate a successful round-trip so the
-        // confirmation UX is fully testable. Set FORM_ENDPOINT above to go live.
-        await new Promise((r) => setTimeout(r, 900));
-      }
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        body: fd,
+        headers: { Accept: 'application/json' },
+        signal: ctrl.signal,
+      });
+      if (!res.ok) throw new Error('Request failed');
       setStatus('success');
     } catch {
       setStatus('error');
+    } finally {
+      clearTimeout(timer);
     }
   };
 
@@ -1448,6 +1488,16 @@ export function FooterForm() {
                 </div>
               ) : (
                 <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit}>
+                  {/* Honeypot: Formspree silently discards submissions where
+                      _gotcha is filled, costing zero monthly quota. */}
+                  <input
+                    type="text"
+                    name="_gotcha"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                  />
                   <div className="flex items-baseline justify-between gap-3 sm:col-span-2">
                     <p className="font-display-serif italic text-lg text-white/90">
                       Tell us where to reach you

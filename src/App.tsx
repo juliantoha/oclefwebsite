@@ -19,11 +19,14 @@ import {
 import { PricingSection } from './Pricing';
 import { TiffanyTestimonial, NgaTestimonial, JiTestimonial } from './Testimonials';
 
-const BG_IMAGE_1 = '/images/hero-night.jpg';
-const BG_IMAGE_2 = '/images/hero-day.jpg';
+/* Responsive hero sources, chosen once at load (matches the preload media
+   queries in index.html so exactly one variant is ever fetched). */
+const MOBILE = window.matchMedia('(max-width: 640px)').matches;
+const BG_IMAGE_1 = MOBILE ? '/images/hero-night-960.jpg' : '/images/hero-night-1600.jpg';
+const BG_IMAGE_2 = MOBILE ? '/images/hero-day-960.jpg' : '/images/hero-day-1600.jpg';
 
 interface RevealLayerProps {
-  image: string;
+  image: string | null;
   progress: number;
 }
 
@@ -56,7 +59,7 @@ function RevealLayer({ image, progress }: RevealLayerProps) {
       className="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none"
       style={
         {
-          backgroundImage: `url(${image})`,
+          backgroundImage: image ? `url(${image})` : undefined,
           maskRepeat: 'no-repeat',
           WebkitMaskRepeat: 'no-repeat',
           maskImage: HIDDEN_MASK,
@@ -91,6 +94,24 @@ export default function App() {
   const [navDark, setNavDark] = useState(false);
   const [activeSection, setActiveSection] = useState('why');
   const [showSticky, setShowSticky] = useState(false);
+  // The warm day image (the reveal layer) defers until the page has loaded so
+  // it never competes with the night image + bundle on the critical path. The
+  // reveal is scroll-gated, so it always arrives before it can be seen.
+  const [daySrc, setDaySrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    const warm = () => {
+      const img = new Image();
+      img.onload = () => setDaySrc(BG_IMAGE_2);
+      img.src = BG_IMAGE_2;
+    };
+    if (document.readyState === 'complete') {
+      warm();
+      return;
+    }
+    window.addEventListener('load', warm, { once: true });
+    return () => window.removeEventListener('load', warm);
+  }, []);
 
   useEffect(() => {
     const sync = () => {
@@ -131,13 +152,14 @@ export default function App() {
     };
   }, []);
 
-  // Headline word morph: "Make" → "Piano" over the 15%–50% scroll window, so the
+  // Headline word morph: "Make" → "Piano" early in the (shortened) pin, so the
   // completed slogan lands while the warm scene is still blooming in behind it.
-  const wordSwap = Math.min(1, Math.max(0, (scrollProgress - 0.15) / 0.35));
+  const wordSwap = Math.min(1, Math.max(0, (scrollProgress - 0.12) / 0.33));
 
-  // Tagline + CTA are the "answer" to the headline's open invitation — reveal them
-  // only after the slogan has resolved into "Piano Every Day".
-  const ctaReveal = Math.min(1, Math.max(0, (scrollProgress - 0.5) / 0.25));
+  // The CTA is the "answer" to the headline's open invitation — reveal it once
+  // the slogan has resolved into "Piano Every Day". (The tagline itself shows
+  // immediately: the first viewport must state the product.)
+  const ctaReveal = Math.min(1, Math.max(0, (scrollProgress - 0.45) / 0.28));
 
   return (
     <div className="min-h-screen bg-white tracking-[-0.02em]" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -194,7 +216,7 @@ export default function App() {
 
         <button
           onClick={() => scrollToId('book')}
-          className={`hidden lg:block text-sm font-semibold px-6 py-2.5 rounded-full transition-colors duration-300 ${
+          className={`text-sm font-semibold px-4 py-2 lg:px-6 lg:py-2.5 rounded-full transition-colors duration-300 ${
             navDark
               ? 'bg-[#eb6a18] text-white hover:bg-[#cf5d12]'
               : 'bg-white text-gray-900 hover:bg-gray-100'
@@ -204,14 +226,17 @@ export default function App() {
         </button>
       </nav>
 
-      <div ref={scrollWrapRef} className="relative bg-[#02040f]" style={{ height: '300vh' }}>
-      <section className="sticky top-0 w-full overflow-hidden h-screen bg-[#02040f]" style={{ height: '100svh' }}>
+      {/* Shorter pin (all ramps rescale off offsetHeight): the full story now
+          completes with no dead scroll at the end. 100dvh tracks the dynamic
+          mobile viewport so no black strip appears as the URL bar collapses. */}
+      <div ref={scrollWrapRef} className="relative bg-[#02040f] h-[230vh] md:h-[280vh]">
+      <section className="sticky top-0 w-full overflow-hidden h-screen bg-[#02040f]" style={{ height: '100dvh' }}>
         <div
           className="absolute inset-0 bg-center bg-cover bg-no-repeat z-10 hero-zoom"
           style={{ backgroundImage: `url(${BG_IMAGE_1})` }}
         />
 
-        <RevealLayer image={BG_IMAGE_2} progress={scrollProgress} />
+        <RevealLayer image={daySrc} progress={scrollProgress} />
 
         <div className="absolute top-[14%] left-0 right-0 z-50 flex flex-col items-center text-center px-5 pointer-events-none">
           <h1 className="text-white leading-[0.95]" aria-label="Make Every Day. Piano Every Day.">
@@ -271,37 +296,49 @@ export default function App() {
           </h1>
         </div>
 
-        <div
-          className="absolute bottom-16 sm:bottom-20 left-0 right-0 z-50 flex flex-col items-center text-center px-5 gap-5 sm:gap-6 pointer-events-none"
-          style={{
-            opacity: ctaReveal,
-            transform: `translateY(${(1 - ctaReveal) * 24}px)`,
-            transition: 'opacity 0.2s linear',
-          }}
-        >
-          <p className="text-base sm:text-lg leading-relaxed text-white/75">
+        {/* The tagline states the product from frame one; only the button rides
+            the scroll ramp. */}
+        <div className="absolute bottom-16 sm:bottom-20 left-0 right-0 z-50 flex flex-col items-center text-center px-5 gap-5 sm:gap-6 pointer-events-none">
+          <p
+            className="text-base sm:text-lg leading-relaxed text-white/75 hero-anim hero-fade"
+            style={{ animationDelay: '0.7s' }}
+          >
             A real teacher to help your child learn every day.{' '}
             <span className="text-white font-semibold whitespace-nowrap">Not once a week.</span>
           </p>
 
-          <div style={{ pointerEvents: ctaReveal > 0.5 ? 'auto' : 'none' }}>
+          <div
+            style={{
+              opacity: ctaReveal,
+              transform: `translateY(${(1 - ctaReveal) * 24}px)`,
+              transition: 'opacity 0.2s linear',
+              pointerEvents: ctaReveal > 0.5 ? 'auto' : 'none',
+            }}
+          >
             <CtaButton variant="glass" size="lg" onClick={() => scrollToId('intro')}>
               Start Learning
             </CtaButton>
           </div>
         </div>
 
+        {/* Real skip control, not a decoration; the pointerEvents guard stops an
+            invisible-but-clickable button once the cue fades out. */}
         <div
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
-          style={{ opacity: Math.max(0, 1 - scrollProgress * 8) }}
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50"
+          style={{
+            opacity: Math.max(0, 1 - scrollProgress * 8),
+            pointerEvents: scrollProgress > 0.12 ? 'none' : 'auto',
+          }}
         >
-          <div
-            className="flex flex-col items-center gap-1 text-white/70 hero-anim hero-fade"
+          <button
+            onClick={() => scrollToId('intro')}
+            aria-label="Skip intro"
+            className="flex flex-col items-center gap-1 rounded-lg text-white/70 hero-anim hero-fade focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             style={{ animationDelay: '1.2s' }}
           >
             <span className="text-[11px] uppercase tracking-[0.2em]">Scroll</span>
             <ChevronDown size={16} className="animate-bounce" />
-          </div>
+          </button>
         </div>
       </section>
       </div>
