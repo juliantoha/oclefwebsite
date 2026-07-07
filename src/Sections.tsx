@@ -943,7 +943,7 @@ const START_STEPS = [
     body: 'Five 1-on-1 lessons in the first week. Your child’s teacher learns how they think, what excites them, and where they get stuck.',
   },
   {
-    when: 'Weeks 2-3',
+    when: 'Weeks 2-4',
     title: 'The habit forms',
     body: 'Sitting down at the piano becomes part of the day. You follow along in Oclef Pro with daily notes, recordings, and feedback.',
   },
