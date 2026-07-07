@@ -25,7 +25,10 @@ import {
 const NAVY = '#004a69';
 
 export const scrollToForm = () =>
-  document.getElementById('book')?.scrollIntoView({
+  // Target the form card itself (#book-form), not the section top: on mobile
+  // the card stacks below the heading/timeline rail, and a booking tap should
+  // land on the fields. #book stays as the section anchor / sticky-bar sentinel.
+  (document.getElementById('book-form') ?? document.getElementById('book'))?.scrollIntoView({
     // JS smooth scrolling isn't auto-disabled for reduced-motion users.
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     block: 'start',
@@ -1505,7 +1508,10 @@ export function FooterForm() {
           </div>
 
           {/* Right — one lit card holding either the form or the success state */}
-          <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-6 shadow-xl shadow-black/20 sm:p-8">
+          <div
+            id="book-form"
+            className="scroll-mt-24 relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-6 shadow-xl shadow-black/20 sm:p-8"
+          >
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(120%_70%_at_50%_-10%,rgba(255,255,255,0.10),transparent_60%)]"

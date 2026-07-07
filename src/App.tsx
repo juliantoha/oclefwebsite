@@ -215,7 +215,7 @@ export default function App() {
         </div>
 
         <button
-          onClick={() => scrollToId('book')}
+          onClick={() => scrollToId('book-form')}
           className={`text-sm font-semibold px-4 py-2 lg:px-6 lg:py-2.5 rounded-full transition-colors duration-300 ${
             navDark
               ? 'bg-[#eb6a18] text-white hover:bg-[#cf5d12]'
@@ -371,7 +371,7 @@ export default function App() {
         }`}
         style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
       >
-        <CtaButton variant="primary" fullWidth onClick={() => scrollToId('book')}>
+        <CtaButton variant="primary" fullWidth onClick={() => scrollToId('book-form')}>
           Book a Free Consultation
         </CtaButton>
       </div>
