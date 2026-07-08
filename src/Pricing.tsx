@@ -164,9 +164,6 @@ function PricingCard({ plan }: { plan: Plan }) {
           <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
             Billed monthly · no contract
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-white/70">
-            Five lessons a week works out to about $25 per 1-on-1 lesson.
-          </p>
         </FadeUp>
 
         <FadeUp delay={0.2}>
@@ -237,8 +234,9 @@ export function PricingSection() {
             </FadeUp>
             <FadeUp delay={0.2}>
               <p className="mt-6 max-w-md mx-auto md:mx-0 text-base text-white/60">
-                One tuition, more than 20 private lessons a month, about $25 each. Guided
-                practice, theory, seminars, recitals, and Oclef Pro are all included.
+                One tuition covers your child’s entire musical education: a teacher every
+                day, guided practice, music theory, performance seminars, recitals, and
+                Oclef Pro. No add-ons, nothing extra to buy.
               </p>
             </FadeUp>
             <FadeUp delay={0.3}>
