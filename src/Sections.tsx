@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { track } from '@vercel/analytics';
 import {
   CalendarDays,
   Users,
@@ -9,6 +10,7 @@ import {
   GraduationCap,
   Clock,
   Check,
+  Minus,
   X,
   ChevronDown,
   ArrowRight,
@@ -24,7 +26,8 @@ import {
 
 const NAVY = '#004a69';
 
-export const scrollToForm = () =>
+export const scrollToForm = () => {
+  track('cta_clicked', { source: 'inline' });
   // Target the form card itself (#book-form), not the section top: on mobile
   // the card stacks below the heading/timeline rail, and a booking tap should
   // land on the fields. #book stays as the section anchor / sticky-bar sentinel.
@@ -33,6 +36,7 @@ export const scrollToForm = () =>
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     block: 'start',
   });
+};
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -310,7 +314,7 @@ export function HowItWorks() {
 }
 
 /* ─────────────────────────  Comparison  ───────────────────────── */
-const COMP_COLS = ['Online Video Courses', 'Piano App', 'Once-a-week Piano Lessons'];
+const COMP_COLS = ['Video Courses', 'Piano Apps', 'Once-a-week Lessons'];
 const COMP_ROWS: { feature: string; values: boolean[]; highlight?: boolean }[] = [
   { feature: 'Interactive Learning', values: [true, true, true] },
   { feature: 'Real-Time Feedback', values: [false, true, true] },
@@ -322,18 +326,28 @@ const COMP_ROWS: { feature: string; values: boolean[]; highlight?: boolean }[] =
   { feature: 'Monthly Assessments', values: [false, false, false] },
 ];
 
-function Mark({ on }: { on: boolean }) {
-  return (
-    <span
-      className="inline-flex items-center justify-center w-7 h-7 rounded-full"
-      style={{ background: on ? '#00952e' : '#b9314f' }}
-    >
-      {on ? (
-        <Check size={16} aria-hidden="true" className="text-white" />
-      ) : (
-        <X size={16} aria-hidden="true" className="text-white" />
-      )}
-      <span className="sr-only">{on ? 'Yes' : 'No'}</span>
+/* Tone-aware marks: competitor cells stay quiet neutrals (a red X would make
+   the competitors the loudest thing in the table), the Oclef column gets the
+   only saturated chip. Yes/no stays legible for color-blind users via the
+   Check-vs-Minus shapes, not color. */
+function Mark({ on, tone = 'muted' }: { on: boolean; tone?: 'muted' | 'brand' }) {
+  if (!on) {
+    return (
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.06]">
+        <Minus size={14} aria-hidden="true" strokeWidth={2.5} className="text-white/40" />
+        <span className="sr-only">No</span>
+      </span>
+    );
+  }
+  return tone === 'brand' ? (
+    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]">
+      <Check size={16} aria-hidden="true" strokeWidth={2.5} className="text-[#eb6a18]" />
+      <span className="sr-only">Yes</span>
+    </span>
+  ) : (
+    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.14]">
+      <Check size={16} aria-hidden="true" className="text-white/75" />
+      <span className="sr-only">Yes</span>
     </span>
   );
 }
@@ -405,7 +419,7 @@ export function Comparison() {
                 className="liquid-glass rounded-t-xl flex items-center px-4 py-4 text-sm font-semibold text-white/80"
                 style={{ position: 'sticky', left: 0, zIndex: 20, backgroundColor: col1Bg, backdropFilter: 'none' }}
               >
-                Features
+                What your child gets
               </div>
               {COMP_COLS.map((c) => (
                 <div
@@ -499,7 +513,7 @@ export function Comparison() {
                     boxShadow: row.highlight ? '0 0 34px rgba(235,106,24,0.5)' : undefined,
                   }}
                 >
-                  <Mark on={true} />
+                  <Mark on tone="brand" />
                 </div>
               </div>
             ))}
@@ -1440,8 +1454,10 @@ export function FooterForm() {
         signal: ctrl.signal,
       });
       if (!res.ok) throw new Error('Request failed');
+      track('book_submitted');
       setStatus('success');
     } catch {
+      track('book_failed');
       setStatus('error');
     } finally {
       clearTimeout(timer);
@@ -1530,9 +1546,9 @@ export function FooterForm() {
                   </p>
                   <ol className="mt-6 flex flex-col gap-4">
                     {[
-                      'We’ll call or email within one business day',
-                      'We pick a time that suits you',
-                      'Your child’s free 30-minute assessment',
+                      'We call or email within one business day',
+                      'We find a time that works for your family',
+                      'Your child gets their free 30-minute assessment',
                     ].map((t, i) => (
                       <li key={i} className="flex items-center gap-3">
                         <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#eb6a18] text-sm font-semibold text-white ring-4 ring-[#eb6a18]/15 shadow-lg shadow-[#eb6a18]/30">
@@ -1581,7 +1597,16 @@ export function FooterForm() {
                     helper="So we can reach you to schedule. We never share it."
                     className="sm:col-span-2"
                   />
-                  <FloatingField label="Child/Children Name(s)" name="child_names" required autoComplete="off" showValid className="sm:col-span-2" />
+                  <FloatingField label="Child’s Name (or Names)" name="child_names" required autoComplete="off" showValid className="sm:col-span-2" />
+                  {/* Optional free-text: the FAQ's "Ask Us Anything" CTA lands here,
+                      and volunteered age/experience makes every lead warmer. */}
+                  <textarea
+                    name="questions"
+                    rows={3}
+                    aria-label="Questions or anything we should know"
+                    placeholder="Anything we should know? Your child’s age, experience, or a question. (Optional)"
+                    className="w-full resize-none rounded-lg border border-white/15 bg-white/[0.06] px-4 py-3 text-base text-white placeholder:text-white/40 transition-all duration-200 focus:border-[#eb6a18] focus:bg-white/[0.09] focus:outline-none focus:ring-2 focus:ring-[#eb6a18]/25 sm:col-span-2"
+                  />
                   <div className="relative sm:col-span-2">
                     <select
                       name="referral_source"
@@ -1612,7 +1637,7 @@ export function FooterForm() {
                       className="flex items-start gap-2 rounded-lg border border-[#ffb4a8]/30 bg-[#b9314f]/15 px-3 py-2 text-sm text-[#ffd2ca] sm:col-span-2"
                     >
                       <X className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                      Something went wrong sending your details. Please try again, your details weren’t lost.
+                      Something went wrong and your request didn’t send. Nothing you typed was lost. Please try again.
                     </p>
                   )}
 

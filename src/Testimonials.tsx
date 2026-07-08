@@ -179,7 +179,7 @@ const NAVY = 'radial-gradient(120% 90% at 18% -10%, #0a5a7d 0%, #004a69 42%, #00
 
 export function TiffanyTestimonial() {
   return (
-    <Testimonial gradient={PEACH} fg="#004a69" sub="#9a8a78" theme="light" author="Tiffany Q.">
+    <Testimonial gradient={PEACH} fg="#004a69" sub="rgba(0,74,105,0.75)" theme="light" author="Tiffany Q.">
       Oclef’s daily lessons have given my daughter a sense of belonging and{' '}
       <Annotate type="underline" delay={450}>confidence</Annotate>.
     </Testimonial>
@@ -188,7 +188,7 @@ export function TiffanyTestimonial() {
 
 export function NgaTestimonial() {
   return (
-    <Testimonial gradient={BLUE} fg="#004a69" sub="#4a6b7a" theme="light" author="Nga C.">
+    <Testimonial gradient={BLUE} fg="#004a69" sub="rgba(0,74,105,0.75)" theme="light" author="Nga C.">
       Oclef has transformed my son’s{' '}
       <Annotate type="underline" delay={450}>love for music</Annotate>, making it a cherished part of his
       daily routine.

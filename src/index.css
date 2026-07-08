@@ -28,10 +28,11 @@ html { font-family: 'Inter', sans-serif; }
 
 /* ── Bento / liquid-glass design language ── */
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  /* Strong enough to actually read as frosted glass (the old 1% white fill was
+     imperceptible over the navy gradients). */
+  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.02) 100%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
   position: relative;
   overflow: hidden;
 }
