@@ -1,11 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Lato:wght@300;400;700;900&display=swap');
-
+/* Fonts are loaded from index.html (preconnect + stylesheet link) so they don't
+   render-block behind the bundled CSS. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* { font-family: 'Inter', sans-serif; }
-.font-display-serif { font-family: 'Lora', serif; font-weight: 500; }
+/* Set the body font at the root and let it INHERIT — a `*` selector here would
+   stamp Inter onto every element and silently break nested Lora/Lato text. */
+html { font-family: 'Inter', sans-serif; }
+.font-display-serif { font-family: 'Lora', serif; font-style: italic; font-weight: 500; }
 .font-lato { font-family: 'Lato', sans-serif; }
 
 @keyframes heroReveal { 0%{opacity:0;transform:translateY(28px);filter:blur(12px)} 100%{opacity:1;transform:translateY(0);filter:blur(0)} }
@@ -26,10 +28,11 @@
 
 /* ── Bento / liquid-glass design language ── */
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  /* Strong enough to actually read as frosted glass (the old 1% white fill was
+     imperceptible over the navy gradients). */
+  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.02) 100%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
   position: relative;
   overflow: hidden;
 }

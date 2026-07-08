@@ -161,7 +161,7 @@ function PricingCard({ plan }: { plan: Plan }) {
             </span>
             {plan.suffix && <span className="text-lg text-white/70">{plan.suffix}</span>}
           </div>
-          <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#eb6a18]/80">
+          <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#eb6a18]">
             Billed monthly · no contract
           </div>
         </FadeUp>
@@ -218,7 +218,8 @@ export function PricingSection() {
       className="scroll-mt-20 relative w-full py-20 sm:py-28"
       style={{ background: 'radial-gradient(120% 90% at 50% 0%, #004a69 0%, #002642 55%, #02040f 100%)' }}
     >
-      <div className="mx-auto max-w-[1080px] px-4 sm:px-6">
+      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="relative mx-auto max-w-[1080px] px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-10 md:gap-12 lg:gap-16 items-center">
           {/* Left — copy (centered on mobile to match the other sections, left-aligned beside the card on desktop) */}
           <div className="text-center md:text-left">
@@ -226,15 +227,16 @@ export function PricingSection() {
               <SectionLabel>Tuition</SectionLabel>
             </FadeUp>
             <FadeUp delay={0.1}>
-              <h2 className="mt-6 text-3xl sm:text-4xl md:text-5xl font-normal tracking-[-0.02em] leading-[1.05] text-white">
+              <h2 className="mt-4 text-4xl sm:text-5xl leading-[1.1] text-white">
                 <span className="font-lato font-bold tracking-[-0.03em]">Pricing built around</span>{' '}
                 <span className="font-display-serif italic text-[#eb6a18]">daily progress.</span>
               </h2>
             </FadeUp>
             <FadeUp delay={0.2}>
               <p className="mt-6 max-w-md mx-auto md:mx-0 text-base text-white/60">
-                No contract, paid monthly. Start with a free assessment, then daily lessons built
-                around your child, backed by a 30-day money-back guarantee.
+                One tuition covers your child’s entire musical education: a teacher every
+                day, guided practice, music theory, performance seminars, recitals, and
+                Oclef Pro. No add-ons, nothing extra to buy.
               </p>
             </FadeUp>
             <FadeUp delay={0.3}>

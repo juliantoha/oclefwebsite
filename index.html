@@ -3,7 +3,202 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Oclef — Piano Every Day</title>
+    <title>Oclef: Daily Piano Lessons for Kids | Piano Every Day</title>
+    <meta
+      name="description"
+      content="Daily online piano lessons for kids. A real teacher every day, not once a week. Recitals and camps at 8 studios in CA, VA & WA. Book a free consultation."
+    />
+    <link rel="canonical" href="https://oclef.com/" />
+    <meta name="theme-color" content="#02040f" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Social cards (og:image must be an absolute URL, scrapers ignore relative paths) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Oclef" />
+    <meta property="og:url" content="https://oclef.com/" />
+    <meta property="og:title" content="Oclef | Piano Every Day" />
+    <meta
+      property="og:description"
+      content="A real teacher every day. Daily online piano lessons for kids, plus recitals, camps, and events at 8 studios across CA, VA & WA."
+    />
+    <meta property="og:image" content="https://oclef.com/images/og-card.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Oclef. Piano Every Day. A child sits at the piano at home in the evening, ready to play."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Oclef | Piano Every Day" />
+    <meta
+      name="twitter:description"
+      content="A real teacher every day. Daily online piano lessons for kids, plus recitals, camps, and events at 8 studios across CA, VA & WA."
+    />
+    <meta name="twitter:image" content="https://oclef.com/images/og-card.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="Oclef. Piano Every Day. A child sits at the piano at home in the evening, ready to play."
+    />
+
+    <!-- Fonts: preconnect + stylesheet here instead of a render-blocking @import
+         inside the bundle CSS (parallelizes the Google CSS with the app CSS). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500&family=Inter:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap"
+    />
+
+    <!-- LCP: start the hero night image alongside the JS bundle (it is otherwise
+         only discoverable after React renders its CSS background). -->
+    <link rel="preload" as="image" href="/images/hero-night-960.jpg" media="(max-width: 640px)" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/hero-night-1600.jpg" media="(min-width: 641px)" fetchpriority="high" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://oclef.com/#org",
+            "name": "Oclef",
+            "url": "https://oclef.com/",
+            "logo": "https://oclef.com/apple-touch-icon.png",
+            "slogan": "Piano Every Day",
+            "description": "Daily online piano lessons for kids, with in-person recitals, camps, and events at studios in California, Virginia, and Washington."
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Evergreen",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+14089155524",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "3623 Cobbert Drive",
+              "addressLocality": "San Jose",
+              "addressRegion": "CA",
+              "postalCode": "95148",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Los Gatos",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+14089155524",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "15466 Los Gatos Blvd.",
+              "addressLocality": "Los Gatos",
+              "addressRegion": "CA",
+              "postalCode": "95032",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Pleasanton",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+19252180054",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "1807 Santa Rita Rd",
+              "addressLocality": "Pleasanton",
+              "addressRegion": "CA",
+              "postalCode": "94566",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Cupertino",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+14089155524",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "20660 Stevens Creek Blvd",
+              "addressLocality": "Cupertino",
+              "addressRegion": "CA",
+              "postalCode": "95014",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Fremont",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+14089155524",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "47000 Warm Springs Blvd",
+              "addressLocality": "Fremont",
+              "addressRegion": "CA",
+              "postalCode": "94539",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Los Altos & Mountain View",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+14089155524",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "655 Castro Street",
+              "addressLocality": "Mountain View",
+              "addressRegion": "CA",
+              "postalCode": "94041",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Loudoun",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+19252180054",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "42395 Ryan Rd",
+              "addressLocality": "Brambleton",
+              "addressRegion": "VA",
+              "postalCode": "20148",
+              "addressCountry": "US"
+            }
+          },
+          {
+            "@type": "MusicSchool",
+            "name": "Oclef Bellevue",
+            "parentOrganization": { "@id": "https://oclef.com/#org" },
+            "url": "https://oclef.com/",
+            "telephone": "+14252090608",
+            "priceRange": "$549/mo",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "1645 140th N.E.",
+              "addressLocality": "Bellevue",
+              "addressRegion": "WA",
+              "postalCode": "98005",
+              "addressCountry": "US"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
